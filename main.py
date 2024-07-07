@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
-from components.graphic_btn import GraphicButton
+
+pysimplegui_user_settings = sg.UserSettings()
 
 theme_dict = {'BACKGROUND': '#000000',
               'TEXT': '#FFFFFF',
@@ -84,23 +85,29 @@ down = sw3_graphic_off = True
 
 def update_block(key):
 
-    match key:
-        case '-TOGGLE_LIGHT_BLOCK-':
-            window[key].update(visible=toggle_light_block)
-            window['-TOGGLE_SWITCH_BLOCK-'].update(visible=toggle_switch_block)
-            window['-TOGGLE_TIMER_BLOCK-'].update(visible=toggle_timer_block)
-        case '-TOGGLE_SWITCH_BLOCK-':
-            window[key].update(visible=toggle_switch_block)
-            window['-TOGGLE_LIGHT_BLOCK-'].update(visible=toggle_light_block)
-            window['-TOGGLE_TIMER_BLOCK-'].update(visible=toggle_timer_block)
-        case '-TOGGLE_TIMER_BLOCK-':
-            window[key].update(visible=toggle_timer_block)
-            window['-TOGGLE_SWITCH_BLOCK-'].update(visible=toggle_switch_block)
-            window['-TOGGLE_LIGHT_BLOCK-'].update(visible=toggle_light_block)
-        case default:
-            window[key].update(visible=toggle_light_block)
-            window['-TOGGLE_SWITCH_BLOCK-'].update(visible=toggle_switch_block)
-            window['-TOGGLE_TIMER_BLOCK-'].update(visible=toggle_timer_block)
+    cases = {
+        '-TOGGLE_LIGHT_BLOCK-': lambda: (
+            window[key].update(visible=toggle_light_block),
+            window['-TOGGLE_SWITCH_BLOCK-'].update(visible=toggle_switch_block),
+            window['-TOGGLE_TIMER_BLOCK-'].update(visible=toggle_timer_block),
+        ),
+        '-TOGGLE_SWITCH_BLOCK-': lambda: (
+            window[key].update(visible=toggle_switch_block),
+            window['-TOGGLE_LIGHT_BLOCK-'].update(visible=toggle_light_block),
+            window['-TOGGLE_TIMER_BLOCK-'].update(visible=toggle_timer_block),
+        ),
+        '-TOGGLE_TIMER_BLOCK-': lambda: (
+            window[key].update(visible=toggle_timer_block),
+            window['-TOGGLE_SWITCH_BLOCK-'].update(visible=toggle_switch_block),
+            window['-TOGGLE_LIGHT_BLOCK-'].update(visible=toggle_light_block),
+        ),
+    }
+
+    cases.get(key, lambda: (
+        window[key].update(visible=toggle_light_block),
+        window['-TOGGLE_SWITCH_BLOCK-'].update(visible=toggle_switch_block),
+        window['-TOGGLE_TIMER_BLOCK-'].update(visible=toggle_timer_block),
+    ))()
 
 
 while True:  # Event Loop
@@ -149,5 +156,7 @@ while True:  # Event Loop
     elif event == '-SW3-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
             sw3_graphic_off = not sw3_graphic_off
             window['-SW3-TOGGLE-GRAPHIC-'].update(image_data=toggle_btn_off if sw3_graphic_off else toggle_btn_on)
+    if pysimplegui_user_settings.get('-enable debugger-', False):
+        print("Debugger is enabled")
 
 window.close()
