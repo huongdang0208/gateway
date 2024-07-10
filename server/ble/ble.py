@@ -1,76 +1,99 @@
+"""
+Example for a BLE 4.0 Server using a GATT dictionary of services and
+characteristics
+"""
+import sys
+import logging
 import asyncio
-import aioble
-import bluetooth
-import struct
-from machine import Pin
-from random import randint
+import threading
 
-# Init LED
-led = Pin(2, Pin.OUT)
-led.value(0)
+from typing import Any, Dict, Union
 
-# Init random value
-value = 0
+from bless import (  # type: ignore
+    BlessServer,
+    BlessGATTCharacteristic,
+    GATTCharacteristicProperties,
+    GATTAttributePermissions,
+)
 
-# Define UUIDs for the service and characteristics
-_BLE_SERVICE_UUID = bluetooth.UUID('19b10000-e8f2-537e-4f6c-d104768a1214')
-_BLE_SENSOR_CHAR_UUID = bluetooth.UUID('19b10001-e8f2-537e-4f6c-d104768a1214')
-_BLE_LED_UUID = bluetooth.UUID('19b10002-e8f2-537e-4f6c-d104768a1214')
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(name=__name__)
 
-# Define the advertising interval
-_ADV_INTERVAL_MS = 250_000
+trigger: Union[asyncio.Event, threading.Event]
+if sys.platform in ["darwin", "win32"]:
+    trigger = threading.Event()
+else:
+    trigger = asyncio.Event()
 
-# Register the GATT server, service, and characteristics
-ble_service = aioble.Service(_BLE_SERVICE_UUID)
-sensor_characteristic = aioble.Characteristic(ble_service, _BLE_SENSOR_CHAR_UUID, read=True, notify=True)
-led_characteristic = aioble.Characteristic(ble_service, _BLE_LED_UUID, read=True, write=True, notify=True, capture=True)
 
-# Register the service
-aioble.register_services(ble_service)
+def read_request(characteristic: BlessGATTCharacteristic, **kwargs) -> bytearray:
+    logger.debug(f"Reading {characteristic.value}")
+    return characteristic.value
 
-# Helper function to encode data as UTF-8
-def _encode_data(data):
-    return str(data).encode('utf-8')
 
-# Helper function to decode the LED characteristic encoding (bytes)
-def _decode_data(data):
-    try:
-        if data is not None:
-            # Decode the UTF-8 data
-            number = int.from_bytes(data, 'big')
-            return number
-    except Exception as e:
-        print("Error decoding temperature:", e)
-        return None
+def write_request(characteristic: BlessGATTCharacteristic, value: Any, **kwargs):
+    characteristic.value = value
+    logger.debug(f"Char value set to {characteristic.value}")
+    if characteristic.value == b"\x0f":
+        logger.debug("Nice")
+        trigger.set()
 
-# Get sensor readings
-def get_random_value():
-    return randint(0,100)
 
-# Get new value and update characteristic
-async def sensor_task():
-    while True:
-        value = get_random_value()
-        sensor_characteristic.write(_encode_data(value), send_update=True)
-        print('New random value written: ', value)
-        await asyncio.sleep_ms(1000)
+async def run(loop):
+    trigger.clear()
 
-# Serially wait for connections. Don't advertise while a central is connected.
-async def peripheral_task():
-    while True:
-        try:
-            async with await aioble.advertise(
-                _ADV_INTERVAL_MS,
-                name="Raspi",
-                services=[_BLE_SERVICE_UUID],
-            ) as connection:
-                print("Connection from", connection.device)
-                await connection.disconnected()
-        except asyncio.CancelledError:
-            # Catch the CancelledError
-            print("Peripheral task cancelled")
-        except Exception as e:
-            print("Error in peripheral_task:", e)
+    # Instantiate the server
+    gatt: Dict = {
+        "A07498CA-AD5B-474E-940D-16F1FBE7E8CD": {
+            "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B": {
+                "Properties": (
+                    GATTCharacteristicProperties.read
+                    | GATTCharacteristicProperties.write
+                    | GATTCharacteristicProperties.indicate
+                ),
+                "Permissions": (
+                    GATTAttributePermissions.readable
+                    | GATTAttributePermissions.writeable
+                ),
+                "Value": None,
+            }
+        },
+        "5c339364-c7be-4f23-b666-a8ff73a6a86a": {
+            "bfc0c92f-317d-4ba9-976b-cc11ce77b4ca": {
+                "Properties": GATTCharacteristicProperties.read,
+                "Permissions": GATTAttributePermissions.readable,
+                "Value": bytearray(b"\x69"),
+            }
+        },
+    }
+    my_service_name = "Test Service"
+    server = BlessServer(name=my_service_name, loop=loop)
+    server.read_request_func = read_request
+    server.write_request_func = write_request
 
-# Run the tasks
-asyncio.gather(sensor_task(), peripheral_task())
+    await server.add_gatt(gatt)
+    await server.start()
+    logger.debug(server.get_characteristic("51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B"))
+    logger.debug("Advertising")
+    logger.info(
+        "Write '0xF' to the advertised characteristic: "
+        + "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B"
+    )
+    if trigger.__module__ == "threading":
+        trigger.wait()
+    else:
+        await trigger.wait()
+    await asyncio.sleep(2)
+    logger.debug("Updating")
+    server.get_characteristic("51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B").value = bytearray(
+        b"i"
+    )
+    server.update_value(
+        "A07498CA-AD5B-474E-940D-16F1FBE7E8CD", "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B"
+    )
+    await asyncio.sleep(5)
+    await server.stop()
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(run(loop))
