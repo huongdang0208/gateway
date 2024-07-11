@@ -4,8 +4,11 @@ from datetime import datetime
 import pytz
 
 from server.mqtt.pub_client import publish_single_message
+from sensor.sht30 import read_sht30_data
+# from server.ble.ble_api import get_characteristic_by_uuid
 
 IST = pytz.timezone('Asia/Saigon')
+temp, humidity = read_sht30_data
 
 class Singleton( object ):
     def __new__( cls ):
@@ -52,7 +55,7 @@ class InterfaceGraphic:
         top_banner = [[sg.Text('Dashboard' + ' ' * 64, font='Any 20', background_color=DARK_HEADER_COLOR),
                     sg.Text(SingletonObj .date_now , font='Any 20', background_color=DARK_HEADER_COLOR, key='-DATE-'), sg.Text(SingletonObj .time_now , font='Any 20', background_color=DARK_HEADER_COLOR, key='-TIME-')]]
 
-        top = [[sg.Text('Home Control', size=(50, 1), font='Any 20')], [sg.Button('Go'), sg.Button('Exit')]]
+        top = [[sg.Text('Home Control', size=(50, 1), font='Any 20'), sg.Text(temp, size=(20, 1), font='Any 20')], [sg.Button('Go'), sg.Button('Exit')]]
 
         light_block = [[sg.Button(image_filename="./icons/lighton.png", key='-LIGHTS-', button_color=GRAY_BACKGROUND, border_width=0, pad=(0, 0)), sg.Text('Lights', font='Any 14', background_color=GRAY_BACKGROUND)]]
 
@@ -180,6 +183,7 @@ class InterfaceGraphic:
                     publish_single_message('hub/lights', '3-1')
             elif event == '-SW1-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     sw1_graphic_off = not sw1_graphic_off
+                    # get_characteristic_by_uuid(sw1_graphic_off)
                     window['-SW1-TOGGLE-GRAPHIC-'].update(image_data=toggle_btn_off if sw1_graphic_off else toggle_btn_on)
             elif event == '-SW2-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     sw2_graphic_off = not sw2_graphic_off
