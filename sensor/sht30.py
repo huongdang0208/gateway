@@ -28,8 +28,8 @@ def read_sht30_data():
             # Sleep for 5 minutes (300 seconds)
             time.sleep(300)
 
+            return cTemp, humidity
+
         except Exception as e:
             print(f"Error: {e}")
 
-if __name__ == "__main__":
-    read_sht30_data()
