@@ -8,7 +8,6 @@ from sensor.sht30 import read_sht30_data
 # from server.ble.ble_api import get_characteristic_by_uuid
 
 IST = pytz.timezone('Asia/Saigon')
-temp, humidity = read_sht30_data
 
 class Singleton( object ):
     def __new__( cls ):
@@ -21,12 +20,12 @@ def update_clock():
     print('Update\n')
     raw_TS = datetime.now(IST)
     SingletonObj .date_now = raw_TS.strftime('%d %b %Y')
-    SingletonObj .time_now = raw_TS.strftime('%H:%M:%S %p')
+    SingletonObj .time_now = raw_TS.strftime('%H:%M %p')
 
 class InterfaceGraphic: 
     def __init__(self):
         pysimplegui_user_settings = sg.UserSettings()
-
+        temp, humidity = read_sht30_data()
         theme_dict = {'BACKGROUND': '#0C0C0C',
                     'TEXT': '#FFFFFF',
                     'INPUT': '#F2EFE8',
@@ -55,7 +54,8 @@ class InterfaceGraphic:
         top_banner = [[sg.Text('Dashboard' + ' ' * 64, font='Any 20', background_color=DARK_HEADER_COLOR),
                     sg.Text(SingletonObj .date_now , font='Any 20', background_color=DARK_HEADER_COLOR, key='-DATE-'), sg.Text(SingletonObj .time_now , font='Any 20', background_color=DARK_HEADER_COLOR, key='-TIME-')]]
 
-        top = [[sg.Text('Home Control', size=(50, 1), font='Any 20'), sg.Text(temp, size=(20, 1), font='Any 20')], [sg.Button('Go'), sg.Button('Exit')]]
+        top = [[sg.Text('Home Control', size=(50, 1), font='Any 20')],
+        [sg.Text('Temperature (°C)', size=(10, 1), font='Any 14'), sg.Text(temp, size=(10, 1), font='Any 14', key='-TEMP-'), sg.Text('Humidity (%RH)', size=(10, 1), font='Any 14'), sg.Text(humidity, size=(10, 1), font='Any 14', key='-HUMID-')]]
 
         light_block = [[sg.Button(image_filename="./icons/lighton.png", key='-LIGHTS-', button_color=GRAY_BACKGROUND, border_width=0, pad=(0, 0)), sg.Text('Lights', font='Any 14', background_color=GRAY_BACKGROUND)]]
 
@@ -89,14 +89,14 @@ class InterfaceGraphic:
                                 [sg.InputText(), sg.Button('Set Timer')]]
 
         layout = [[sg.Column(top_banner, size=(960, 60), pad=(0,0), background_color=DARK_HEADER_COLOR)],
-                [sg.Column(top, size=(920, 90), pad=BPAD_TOP)],
+                [sg.Column(top, size=(940, 90), pad=BPAD_TOP)],
                 [sg.Column([[sg.Column(light_block, size=(170,50), pad=BPAD_LEFT_INSIDE, background_color=GRAY_BACKGROUND)],
                             [sg.Column(switch_block, size=(170,50),  pad=BPAD_LEFT_INSIDE, background_color=GRAY_BACKGROUND)],
                             [sg.Column(timer_block, size=(170,50),  pad=BPAD_LEFT_INSIDE, background_color=GRAY_BACKGROUND)]],
                             pad=BPAD_LEFT, size=(170,320), background_color=BLACK_BACKGROUND),
-                sg.Column(light_content_block, size=(750, 320), pad=BPAD_RIGHT, key='-TOGGLE_LIGHT_BLOCK-', visible=True),
-                sg.Column(switch_content_block, size=(750, 320), pad=BPAD_RIGHT, key='-TOGGLE_SWITCH_BLOCK-', visible=False),
-                sg.Column(timer_content_block, size=(750, 320), pad=BPAD_RIGHT, key='-TOGGLE_TIMER_BLOCK-', visible=False)]]
+                sg.Column(light_content_block, size=(768, 320), pad=BPAD_RIGHT, key='-TOGGLE_LIGHT_BLOCK-', visible=True),
+                sg.Column(switch_content_block, size=(768, 320), pad=BPAD_RIGHT, key='-TOGGLE_SWITCH_BLOCK-', visible=False),
+                sg.Column(timer_content_block, size=(768, 320), pad=BPAD_RIGHT, key='-TOGGLE_TIMER_BLOCK-', visible=False)]]
 
         window = sg.Window('Dashboard PySimpleGUI-Style', layout, margins=(0, 0), background_color=BORDER_COLOR, no_titlebar=True, grab_anywhere=True)
 
@@ -140,6 +140,9 @@ class InterfaceGraphic:
             window['-TIME-'].update(SingletonObj .time_now)
             window.refresh()
             update_clock()
+            temp, humidity = read_sht30_data()
+            window['-TEMP-'].update(temp)
+            window['-HUMID-'].update(humidity)
             if event == sg.WIN_CLOSED or event == 'Exit':
                 break
             elif event == '-LIGHTS-':
@@ -194,5 +197,10 @@ class InterfaceGraphic:
             if pysimplegui_user_settings.get('-enable debugger-', False):
                 print("Debugger is enabled")
         window.close()
-update_clock()
-InterfaceGraphic()
+
+def main():
+    update_clock()
+    InterfaceGraphic()
+
+if __name__ == "__main__":
+    main()
