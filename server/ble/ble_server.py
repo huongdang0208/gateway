@@ -41,10 +41,16 @@ def write_request(characteristic: BlessGATTCharacteristic, value: Any, **kwargs)
         logger.debug("Nice")
         trigger.set()
 
-# def get_characteristic_by_uuid(val: any):
-#     logger.debug(f"Char value set to {characteristic.value}")
-#     characteristic = server.get_characteristic("51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B")
-#     write_request(characteristic, val)
+def get_characteristic_by_uuid(val: Any):
+    print(val)
+    if not isinstance(val, str):
+        val = str(val)  # Convert non-string input to string
+    characteristic = server.get_characteristic("51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B")
+    logger.debug(f"Char value set to {characteristic.value}")
+    byte_val = bytearray(val, 'utf-8')  # Convert string to byte array
+    write_request(characteristic, byte_val)
+
+
 
 
 async def run(loop):
@@ -105,5 +111,5 @@ async def run(loop):
     return server
 
 #Initial bluetooth service
-loop = asyncio.get_event_loop()
-loop.run_until_complete(run(loop))
+# loop = asyncio.get_event_loop()
+# loop.run_until_complete(run(loop))
