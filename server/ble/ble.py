@@ -66,7 +66,7 @@ async def run(loop):
             }
         },
     }
-    my_service_name = "Test Service"
+    my_service_name = "Pi Service"
     server = BlessServer(name=my_service_name, loop=loop)
     server.read_request_func = read_request
     server.write_request_func = write_request
