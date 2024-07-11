@@ -1,11 +1,12 @@
 import PySimpleGUI as sg
-import time
+import threading
+import asyncio
 from datetime import datetime
 import pytz
 
 from server.mqtt.pub_client import publish_single_message
-from sensor.sht30 import read_sht30_data
-# from server.ble.ble_api import get_characteristic_by_uuid
+# from sensor.sht30 import read_sht30_data
+from server.ble.ble_server import get_characteristic_by_uuid, server, run
 
 IST = pytz.timezone('Asia/Saigon')
 
@@ -25,7 +26,7 @@ def update_clock():
 class InterfaceGraphic: 
     def __init__(self):
         pysimplegui_user_settings = sg.UserSettings()
-        temp, humidity = read_sht30_data()
+        # temp, humidity = read_sht30_data()
         theme_dict = {'BACKGROUND': '#0C0C0C',
                     'TEXT': '#FFFFFF',
                     'INPUT': '#F2EFE8',
@@ -55,7 +56,8 @@ class InterfaceGraphic:
                     sg.Text(SingletonObj .date_now , font='Any 20', background_color=DARK_HEADER_COLOR, key='-DATE-'), sg.Text(SingletonObj .time_now , font='Any 20', background_color=DARK_HEADER_COLOR, key='-TIME-')]]
 
         top = [[sg.Text('Home Control', size=(50, 1), font='Any 20')],
-        [sg.Text('Temperature (°C)', size=(10, 1), font='Any 14'), sg.Text(temp, size=(10, 1), font='Any 14', key='-TEMP-'), sg.Text('Humidity (%RH)', size=(10, 1), font='Any 14'), sg.Text(humidity, size=(10, 1), font='Any 14', key='-HUMID-')]]
+        #[sg.Text('Temperature (°C)', size=(20, 1), font='Any 14'), sg.Text('temp', size=(10, 1), font='Any 14', key='-TEMP-'), sg.Text('Humidity (%RH)', size=(20, 1), font='Any 14'), sg.Text('humidity', size=(10, 1), font='Any 14', key='-HUMID-')],
+        [sg.Button('Go'), sg.Button('Exit')]]
 
         light_block = [[sg.Button(image_filename="./icons/lighton.png", key='-LIGHTS-', button_color=GRAY_BACKGROUND, border_width=0, pad=(0, 0)), sg.Text('Lights', font='Any 14', background_color=GRAY_BACKGROUND)]]
 
@@ -140,9 +142,9 @@ class InterfaceGraphic:
             window['-TIME-'].update(SingletonObj .time_now)
             window.refresh()
             update_clock()
-            temp, humidity = read_sht30_data()
-            window['-TEMP-'].update(temp)
-            window['-HUMID-'].update(humidity)
+            # temp, humidity = read_sht30_data()
+            # window['-TEMP-'].update(temp)
+            # window['-HUMID-'].update(humidity)
             if event == sg.WIN_CLOSED or event == 'Exit':
                 break
             elif event == '-LIGHTS-':
@@ -186,7 +188,7 @@ class InterfaceGraphic:
                     publish_single_message('hub/lights', '3-1')
             elif event == '-SW1-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     sw1_graphic_off = not sw1_graphic_off
-                    # get_characteristic_by_uuid(sw1_graphic_off)
+                    get_characteristic_by_uuid(sw1_graphic_off)
                     window['-SW1-TOGGLE-GRAPHIC-'].update(image_data=toggle_btn_off if sw1_graphic_off else toggle_btn_on)
             elif event == '-SW2-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     sw2_graphic_off = not sw2_graphic_off
@@ -198,9 +200,26 @@ class InterfaceGraphic:
                 print("Debugger is enabled")
         window.close()
 
-def main():
+def init_gui():
     update_clock()
     InterfaceGraphic()
+
+def init_ble(loop):
+    loop.run_until_complete(run(loop))
+
+def main():
+    loop = asyncio.get_event_loop()
+
+    t1 = threading.Thread(target=init_gui, args=())
+    t2 = threading.Thread(target=init_ble, args=(loop,))
+
+    t1.start()
+    t2.start()
+
+    t1.join()
+    t2.join()
+
+    print("Done!")
 
 if __name__ == "__main__":
     main()

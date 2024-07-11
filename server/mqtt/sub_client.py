@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     # Subscribe to topics
     client.subscribe("hub/lights", 0)
-    client.subscribe("adult/#", 0)
+    client.subscribe("hub/switches", 0)
 
     # Keep the client loop running
     while client.loop() == 0:

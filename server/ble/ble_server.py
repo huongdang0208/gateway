@@ -17,8 +17,6 @@ from bless import (  # type: ignore
 )
 
 server = BlessServer
-is_trigger = False
-value = ""
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(name=__name__)
@@ -36,15 +34,17 @@ def read_request(characteristic: BlessGATTCharacteristic, **kwargs) -> bytearray
 
 
 def write_request(characteristic: BlessGATTCharacteristic, value: Any, **kwargs):
+    logger.debug(f"Writing {value} to {characteristic}")
     characteristic.value = value
     logger.debug(f"Char value set to {characteristic.value}")
     if characteristic.value == b"\x0f":
         logger.debug("Nice")
         trigger.set()
 
-def get_characteristic_by_uuid(val: any):
-    value = val
-    is_trigger = True
+# def get_characteristic_by_uuid(val: any):
+#     logger.debug(f"Char value set to {characteristic.value}")
+#     characteristic = server.get_characteristic("51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B")
+#     write_request(characteristic, val)
 
 
 async def run(loop):
@@ -100,10 +100,6 @@ async def run(loop):
     server.update_value(
         "A07498CA-AD5B-474E-940D-16F1FBE7E8CD", "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B"
     )
-
-    if is_trigger:
-        print("Hello")
-        write_request(server.get_characteristic("51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B"), value)
     await asyncio.sleep(5)
     await server.stop()
     return server
