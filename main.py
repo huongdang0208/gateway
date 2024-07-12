@@ -5,7 +5,7 @@ from datetime import datetime
 import pytz
 
 from server.mqtt.pub_client import publish_single_message
-# from sensor.sht30 import read_sht30_data
+from sensor.sht30 import read_sht30_data
 from server.ble.ble_server import get_characteristic_by_uuid, server, run
 
 IST = pytz.timezone('Asia/Saigon')
@@ -26,7 +26,7 @@ def update_clock():
 class InterfaceGraphic: 
     def __init__(self):
         pysimplegui_user_settings = sg.UserSettings()
-        # temp, humidity = read_sht30_data()
+        temp, humidity = read_sht30_data()
         theme_dict = {'BACKGROUND': '#0C0C0C',
                     'TEXT': '#FFFFFF',
                     'INPUT': '#F2EFE8',
@@ -56,8 +56,7 @@ class InterfaceGraphic:
                     sg.Text(SingletonObj .date_now , font='Any 16', background_color=DARK_HEADER_COLOR, key='-DATE-'), sg.Text(SingletonObj .time_now , font='Any 16', background_color=DARK_HEADER_COLOR, key='-TIME-')]]
 
         top = [[sg.Text('Home Control', size=(50, 1), font='Any 20')],
-        [sg.Text('Temperature (°C)', size=(20, 1), font='Any 14'), sg.Text('temp', size=(10, 1), font='Any 14', key='-TEMP-'), sg.Text('Humidity (%RH)', size=(20, 1), font='Any 14'), sg.Text('humidity', size=(10, 1), font='Any 14', key='-HUMID-')],
-        [sg.Button('Go'), sg.Button('Exit')]]
+        [sg.Text('Temperature (°C)', size=(20, 1), font='Any 14'), sg.Text(temp, size=(10, 1), font='Any 14', key='-TEMP-'), sg.Text('Humidity (%RH)', size=(20, 1), font='Any 14'), sg.Text(humidity, size=(10, 1), font='Any 14', key='-HUMID-')]]
 
         light_block = [[sg.Button(image_filename="./icons/lighton.png", key='-LIGHTS-', button_color=GRAY_BACKGROUND, border_width=0, pad=(0, 0)), sg.Text('Lights', font='Any 14', background_color=GRAY_BACKGROUND)]]
 
@@ -100,7 +99,7 @@ class InterfaceGraphic:
                 sg.Column(switch_content_block, size=(768, 320), pad=BPAD_RIGHT, key='-TOGGLE_SWITCH_BLOCK-', visible=False),
                 sg.Column(timer_content_block, size=(768, 320), pad=BPAD_RIGHT, key='-TOGGLE_TIMER_BLOCK-', visible=False)]]
 
-        window = sg.Window('Dashboard PySimpleGUI-Style', layout, margins=(0, 0), background_color=BORDER_COLOR, no_titlebar=True, grab_anywhere=True)
+        window = sg.Window('Dashboard Control', layout, margins=(0, 0), background_color=BORDER_COLOR, no_titlebar=True, grab_anywhere=True)
 
         toggle_light_block = True
         toggle_switch_block = False
@@ -142,9 +141,9 @@ class InterfaceGraphic:
             window['-TIME-'].update(SingletonObj .time_now)
             window.refresh()
             update_clock()
-            # temp, humidity = read_sht30_data()
-            # window['-TEMP-'].update(temp)
-            # window['-HUMID-'].update(humidity)
+            temp, humidity = read_sht30_data()
+            window['-TEMP-'].update(temp)
+            window['-HUMID-'].update(humidity)
             if event == sg.WIN_CLOSED or event == 'Exit':
                 break
             elif event == '-LIGHTS-':
