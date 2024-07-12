@@ -165,42 +165,46 @@ class InterfaceGraphic:
             elif event == '-LIGHT-1-ON':
                     window['-LIGHT-1-ON'].update(visible=False)
                     window['-LIGHT-1-OFF'].update(visible=True)
-                    publish_single_message('hub/lights', '1-0') # turn off
+                    get_characteristic_by_uuid('1-0')
+                    # publish_single_message('hub/lights', '1-0') # turn off
             elif event == '-LIGHT-1-OFF':
                     window['-LIGHT-1-OFF'].update(visible=False)
                     window['-LIGHT-1-ON'].update(visible=True)
-                    publish_single_message('hub/lights', '1-1') # turn on
+                    get_characteristic_by_uuid('1-1')
+                    # publish_single_message('hub/lights', '1-1') # turn on
             elif event == '-LIGHT-2-ON':
                     window['-LIGHT-2-ON'].update(visible=False)
                     window['-LIGHT-2-OFF'].update(visible=True)
-                    publish_single_message('hub/lights', '2-0')
+                    get_characteristic_by_uuid('2-0')
+                    # publish_single_message('hub/lights', '2-0')
             elif event == '-LIGHT-2-OFF':
                     window['-LIGHT-2-OFF'].update(visible=False)
                     window['-LIGHT-2-ON'].update(visible=True)
-                    publish_single_message('hub/lights', '2-1')
+                    get_characteristic_by_uuid('2-1')
+                    # publish_single_message('hub/lights', '2-1')
             elif event == '-LIGHT-3-ON':
                     window['-LIGHT-3-ON'].update(visible=False)
                     window['-LIGHT-3-OFF'].update(visible=True)
-                    publish_single_message('hub/lights', '3-0')
+                    get_characteristic_by_uuid('3-0')
+                    # publish_single_message('hub/lights', '3-0')
             elif event == '-LIGHT-3-OFF':
                     window['-LIGHT-3-OFF'].update(visible=False)
                     window['-LIGHT-3-ON'].update(visible=True)
-                    publish_single_message('hub/lights', '3-1')
+                    get_characteristic_by_uuid('3-1')
             elif event == '-SW1-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     sw1_graphic_off = not sw1_graphic_off
                     action = 1 if sw1_graphic_off else 0
-                    get_characteristic_by_uuid('1-{}'.format(str(action)))
-                    get_characteristic_by_uuid(action)
+                    publish_single_message('hub/switches', '1-{}'.format(action))
                     window['-SW1-TOGGLE-GRAPHIC-'].update(image_data=toggle_btn_off if sw1_graphic_off else toggle_btn_on)
             elif event == '-SW2-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     sw2_graphic_off = not sw2_graphic_off
                     action = 1 if sw2_graphic_off else 0
-                    get_characteristic_by_uuid('2-{}'.format(str(action)))
+                    publish_single_message('hub/switches', '2-{}'.format(action))
                     window['-SW2-TOGGLE-GRAPHIC-'].update(image_data=toggle_btn_off if sw2_graphic_off else toggle_btn_on)
             elif event == '-SW3-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     sw3_graphic_off = not sw3_graphic_off
                     action = 1 if sw3_graphic_off else 0
-                    get_characteristic_by_uuid('3-{}'.format(str(action)))
+                    publish_single_message('hub/switches', '3-{}'.format(action))
                     window['-SW3-TOGGLE-GRAPHIC-'].update(image_data=toggle_btn_off if sw3_graphic_off else toggle_btn_on)
             if pysimplegui_user_settings.get('-enable debugger-', False):
                 print("Debugger is enabled")
