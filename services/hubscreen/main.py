@@ -1,8 +1,10 @@
 import PySimpleGUI as sg
 import threading
 import asyncio
-from datetime import datetime
 import pytz
+import paho.mqtt.client as mqtt
+from datetime import datetime
+from protobuf import hubscreen_pb2
 
 # from sensor.sht30 import read_sht30_data
 
@@ -195,7 +197,6 @@ class InterfaceGraphic:
         window.close()
 
 def init_gui():
-    update_clock()
     InterfaceGraphic()
 
 
