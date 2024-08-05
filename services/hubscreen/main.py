@@ -1,14 +1,14 @@
 import PySimpleGUI as sg
 import threading
 import asyncio
-from datetime import datetime
 import pytz
+import paho.mqtt.client as mqtt
+from datetime import datetime
+from protobuf import hubscreen_pb2
 
-from server.mqtt.pub_client import publish_single_message
-from sensor.sht30 import read_sht30_data
-from server.ble.ble_server import get_characteristic_by_uuid, server, run
+# from sensor.sht30 import read_sht30_data
 
-IST = pytz.timezone('Asia/Saigon')
+IST = pytz.timezone('Asia/Ho_Chi_Minh')
 
 class Singleton( object ):
     def __new__( cls ):
@@ -26,7 +26,7 @@ def update_clock():
 class InterfaceGraphic: 
     def __init__(self):
         pysimplegui_user_settings = sg.UserSettings()
-        temp, humidity = read_sht30_data()
+        # temp, humidity = read_sht30_data()
         theme_dict = {'BACKGROUND': '#0C0C0C',
                     'TEXT': '#FFFFFF',
                     'INPUT': '#F2EFE8',
@@ -56,28 +56,29 @@ class InterfaceGraphic:
                     sg.Text(SingletonObj .date_now , font='Any 16', background_color=DARK_HEADER_COLOR, key='-DATE-'), sg.Text(SingletonObj .time_now , font='Any 16', background_color=DARK_HEADER_COLOR, key='-TIME-')]]
 
         top = [[sg.Text('Home Control', size=(50, 1), font='Any 20')],
-        [sg.Text('Temperature (°C)', size=(20, 1), font='Any 14'), sg.Text(temp, size=(10, 1), font='Any 14', key='-TEMP-'), sg.Text('Humidity (%RH)', size=(20, 1), font='Any 14'), sg.Text(humidity, size=(10, 1), font='Any 14', key='-HUMID-')]]
+        # [sg.Text('Temperature (°C)', size=(20, 1), font='Any 14'), sg.Text('temp', size=(10, 1), font='Any 14', key='-TEMP-'), sg.Text('Humidity (%RH)', size=(20, 1), font='Any 14'), sg.Text('humidity', size=(10, 1), font='Any 14', key='-HUMID-')],
+        [sg.Button('Exit'), sg.Button('Go')]]
 
-        light_block = [[sg.Button(image_filename="./icons/lighton.png", key='-LIGHTS-', button_color=GRAY_BACKGROUND, border_width=0, pad=(0, 0)), sg.Text('Lights', font='Any 14', background_color=GRAY_BACKGROUND)]]
+        light_block = [[sg.Button(image_filename="../../icons/lighton.png", key='-LIGHTS-', button_color=GRAY_BACKGROUND, border_width=0, pad=(0, 0)), sg.Text('Lights', font='Any 14', background_color=GRAY_BACKGROUND)]]
 
-        switch_block = [[sg.Button(image_filename="./icons/switch.png", key='-SWITCHES-', border_width=0, button_color=GRAY_BACKGROUND, pad=(0, 0)), sg.Text('Switches', font='Any 14', background_color=GRAY_BACKGROUND)]]
+        switch_block = [[sg.Button(image_filename="../../icons/switch.png", key='-SWITCHES-', border_width=0, button_color=GRAY_BACKGROUND, pad=(0, 0)), sg.Text('Switches', font='Any 14', background_color=GRAY_BACKGROUND)]]
 
-        timer_block = [[sg.Button(image_filename="./icons/timer.png", key='-TIMER-', border_width=0, button_color=GRAY_BACKGROUND, pad=(0, 0)), sg.Text('Set Timer', font='Any 14', background_color=GRAY_BACKGROUND)]]
+        timer_block = [[sg.Button(image_filename="../../icons/timer.png", key='-TIMER-', border_width=0, button_color=GRAY_BACKGROUND, pad=(0, 0)), sg.Text('Set Timer', font='Any 14', background_color=GRAY_BACKGROUND)]]
 
 
         light_content_block = [
                                 # Light 1
                                 [sg.Text('Light 1', font='Any 14', pad=(10, 10)),
-                                sg.Button(image_filename='./icons/lighton.png', key='-LIGHT-1-ON', visible=False, border_width=0, button_color='#0C0C0C'),
-                                sg.Button( image_filename='./icons/lightoff.png', key='-LIGHT-1-OFF', visible=True, border_width=0, button_color='#0C0C0C')],
+                                sg.Button(image_filename='../../icons/lighton.png', key='-LIGHT-1-ON', visible=False, border_width=0, button_color='#0C0C0C'),
+                                sg.Button( image_filename='../../icons/lightoff.png', key='-LIGHT-1-OFF', visible=True, border_width=0, button_color='#0C0C0C')],
                                 # Light 2
                                 [sg.Text('Light 2', font='Any 14', pad=(10, 10)),
-                                sg.Button(image_filename='./icons/lighton.png', key='-LIGHT-2-ON', visible=False, border_width=0, button_color='#0C0C0C'),
-                                sg.Button( image_filename='./icons/lightoff.png', key='-LIGHT-2-OFF', visible=True, border_width=0, button_color='#0C0C0C')],
+                                sg.Button(image_filename='../../icons/lighton.png', key='-LIGHT-2-ON', visible=False, border_width=0, button_color='#0C0C0C'),
+                                sg.Button( image_filename='../../icons/lightoff.png', key='-LIGHT-2-OFF', visible=True, border_width=0, button_color='#0C0C0C')],
                                 # Light 3
                                 [sg.Text('Light 3', font='Any 14', pad=(10, 10)),
-                                sg.Button(image_filename='./icons/lighton.png', key='-LIGHT-3-ON', visible=False, border_width=0, button_color='#0C0C0C'),
-                                sg.Button( image_filename='./icons/lightoff.png', key='-LIGHT-3-OFF', visible=True, border_width=0, button_color='#0C0C0C')]]
+                                sg.Button(image_filename='../../icons/lighton.png', key='-LIGHT-3-ON', visible=False, border_width=0, button_color='#0C0C0C'),
+                                sg.Button( image_filename='../../icons/lightoff.png', key='-LIGHT-3-OFF', visible=True, border_width=0, button_color='#0C0C0C')]]
 
         switch_content_block = [[sg.Text('Switch 1', font='Any 14'),
                                 sg.Button('', image_data=toggle_btn_off, key='-SW1-TOGGLE-GRAPHIC-', button_color=(sg.theme_background_color(), sg.theme_background_color()), border_width=0)],
@@ -141,9 +142,9 @@ class InterfaceGraphic:
             window['-TIME-'].update(SingletonObj .time_now)
             window.refresh()
             update_clock()
-            temp, humidity = read_sht30_data()
-            window['-TEMP-'].update(temp)
-            window['-HUMID-'].update(humidity)
+            # temp, humidity = read_sht30_data()
+            # window['-TEMP-'].update(temp)
+            # window['-HUMID-'].update(humidity)
             if event == sg.WIN_CLOSED or event == 'Exit':
                 break
             elif event == '-LIGHTS-':
@@ -164,69 +165,50 @@ class InterfaceGraphic:
             elif event == '-LIGHT-1-ON':
                     window['-LIGHT-1-ON'].update(visible=False)
                     window['-LIGHT-1-OFF'].update(visible=True)
-                    get_characteristic_by_uuid('1-0')
-                    # publish_single_message('hub/lights', '1-0') # turn off
             elif event == '-LIGHT-1-OFF':
                     window['-LIGHT-1-OFF'].update(visible=False)
                     window['-LIGHT-1-ON'].update(visible=True)
-                    get_characteristic_by_uuid('1-1')
-                    # publish_single_message('hub/lights', '1-1') # turn on
             elif event == '-LIGHT-2-ON':
                     window['-LIGHT-2-ON'].update(visible=False)
                     window['-LIGHT-2-OFF'].update(visible=True)
-                    get_characteristic_by_uuid('2-0')
-                    # publish_single_message('hub/lights', '2-0')
             elif event == '-LIGHT-2-OFF':
                     window['-LIGHT-2-OFF'].update(visible=False)
                     window['-LIGHT-2-ON'].update(visible=True)
-                    get_characteristic_by_uuid('2-1')
-                    # publish_single_message('hub/lights', '2-1')
             elif event == '-LIGHT-3-ON':
                     window['-LIGHT-3-ON'].update(visible=False)
                     window['-LIGHT-3-OFF'].update(visible=True)
-                    get_characteristic_by_uuid('3-0')
-                    # publish_single_message('hub/lights', '3-0')
             elif event == '-LIGHT-3-OFF':
                     window['-LIGHT-3-OFF'].update(visible=False)
                     window['-LIGHT-3-ON'].update(visible=True)
-                    get_characteristic_by_uuid('3-1')
             elif event == '-SW1-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     sw1_graphic_off = not sw1_graphic_off
                     action = 1 if sw1_graphic_off else 0
-                    publish_single_message('hub/switches', '1-{}'.format(action))
                     window['-SW1-TOGGLE-GRAPHIC-'].update(image_data=toggle_btn_off if sw1_graphic_off else toggle_btn_on)
             elif event == '-SW2-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     sw2_graphic_off = not sw2_graphic_off
                     action = 1 if sw2_graphic_off else 0
-                    publish_single_message('hub/switches', '2-{}'.format(action))
                     window['-SW2-TOGGLE-GRAPHIC-'].update(image_data=toggle_btn_off if sw2_graphic_off else toggle_btn_on)
             elif event == '-SW3-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     sw3_graphic_off = not sw3_graphic_off
                     action = 1 if sw3_graphic_off else 0
-                    publish_single_message('hub/switches', '3-{}'.format(action))
                     window['-SW3-TOGGLE-GRAPHIC-'].update(image_data=toggle_btn_off if sw3_graphic_off else toggle_btn_on)
             if pysimplegui_user_settings.get('-enable debugger-', False):
                 print("Debugger is enabled")
         window.close()
 
 def init_gui():
-    update_clock()
     InterfaceGraphic()
 
-def init_ble(loop):
-    loop.run_until_complete(run(loop))
 
 def main():
     loop = asyncio.get_event_loop()
 
     t1 = threading.Thread(target=init_gui, args=())
-    t2 = threading.Thread(target=init_ble, args=(loop,))
 
     t1.start()
-    t2.start()
 
     t1.join()
-    t2.join()
+    # t2.join()
 
     print("Done!")
 
