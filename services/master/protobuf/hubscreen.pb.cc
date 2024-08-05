@@ -53,7 +53,8 @@ struct Switch_tDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 Switch_tDefaultTypeInternal _Switch_t_default_instance_;
 PROTOBUF_CONSTEXPR Command::Command(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.device_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+    /*decltype(_impl_.sw_device_)*/{}
+  , /*decltype(_impl_.led_device_)*/{}
   , /*decltype(_impl_.action_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.service_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_._cached_size_)*/{}} {}
@@ -110,7 +111,8 @@ const uint32_t TableStruct_hubscreen_2eproto::offsets[] PROTOBUF_SECTION_VARIABL
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::hubscreen::Command, _impl_.device_id_),
+  PROTOBUF_FIELD_OFFSET(::hubscreen::Command, _impl_.sw_device_),
+  PROTOBUF_FIELD_OFFSET(::hubscreen::Command, _impl_.led_device_),
   PROTOBUF_FIELD_OFFSET(::hubscreen::Command, _impl_.action_),
   PROTOBUF_FIELD_OFFSET(::hubscreen::Command, _impl_.service_),
   ~0u,  // no _has_bits_
@@ -126,7 +128,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 0, -1, -1, sizeof(::hubscreen::Led_t)},
   { 9, -1, -1, sizeof(::hubscreen::Switch_t)},
   { 18, -1, -1, sizeof(::hubscreen::Command)},
-  { 27, -1, -1, sizeof(::hubscreen::Response)},
+  { 28, -1, -1, sizeof(::hubscreen::Response)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -140,14 +142,15 @@ const char descriptor_table_protodef_hubscreen_2eproto[] PROTOBUF_SECTION_VARIAB
   "\n\017hubscreen.proto\022\thubscreen\"/\n\005Led_t\022\013\n"
   "\003pin\030\001 \001(\005\022\r\n\005state\030\002 \001(\010\022\n\n\002id\030\003 \001(\t\"2\n"
   "\010Switch_t\022\013\n\003pin\030\004 \001(\005\022\r\n\005state\030\005 \001(\010\022\n\n"
-  "\002id\030\006 \001(\t\"=\n\007Command\022\021\n\tdevice_id\030\001 \001(\t\022"
-  "\016\n\006action\030\002 \001(\t\022\017\n\007service\030\003 \001(\t\"+\n\010Resp"
-  "onse\022\016\n\006status\030\001 \001(\t\022\017\n\007message\030\002 \001(\tb\006p"
-  "roto3"
+  "\002id\030\006 \001(\t\"x\n\007Command\022&\n\tsw_device\030\001 \003(\0132"
+  "\023.hubscreen.Switch_t\022$\n\nled_device\030\002 \003(\013"
+  "2\020.hubscreen.Led_t\022\016\n\006action\030\003 \001(\t\022\017\n\007se"
+  "rvice\030\004 \001(\t\"+\n\010Response\022\016\n\006status\030\001 \001(\t\022"
+  "\017\n\007message\030\002 \001(\tb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_hubscreen_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_hubscreen_2eproto = {
-    false, false, 245, descriptor_table_protodef_hubscreen_2eproto,
+    false, false, 304, descriptor_table_protodef_hubscreen_2eproto,
     "hubscreen.proto",
     &descriptor_table_hubscreen_2eproto_once, nullptr, 0, 4,
     schemas, file_default_instances, TableStruct_hubscreen_2eproto::offsets,
@@ -704,20 +707,13 @@ Command::Command(const Command& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   Command* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.device_id_){}
+      decltype(_impl_.sw_device_){from._impl_.sw_device_}
+    , decltype(_impl_.led_device_){from._impl_.led_device_}
     , decltype(_impl_.action_){}
     , decltype(_impl_.service_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.device_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.device_id_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_device_id().empty()) {
-    _this->_impl_.device_id_.Set(from._internal_device_id(), 
-      _this->GetArenaForAllocation());
-  }
   _impl_.action_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.action_.Set("", GetArenaForAllocation());
@@ -742,15 +738,12 @@ inline void Command::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.device_id_){}
+      decltype(_impl_.sw_device_){arena}
+    , decltype(_impl_.led_device_){arena}
     , decltype(_impl_.action_){}
     , decltype(_impl_.service_){}
     , /*decltype(_impl_._cached_size_)*/{}
   };
-  _impl_.device_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.device_id_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   _impl_.action_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.action_.Set("", GetArenaForAllocation());
@@ -772,7 +765,8 @@ Command::~Command() {
 
 inline void Command::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.device_id_.Destroy();
+  _impl_.sw_device_.~RepeatedPtrField();
+  _impl_.led_device_.~RepeatedPtrField();
   _impl_.action_.Destroy();
   _impl_.service_.Destroy();
 }
@@ -787,7 +781,8 @@ void Command::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.device_id_.ClearToEmpty();
+  _impl_.sw_device_.Clear();
+  _impl_.led_device_.Clear();
   _impl_.action_.ClearToEmpty();
   _impl_.service_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -799,19 +794,35 @@ const char* Command::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string device_id = 1;
+      // repeated .hubscreen.Switch_t sw_device = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_device_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "hubscreen.Command.device_id"));
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_sw_device(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
         } else
           goto handle_unusual;
         continue;
-      // string action = 2;
+      // repeated .hubscreen.Led_t led_device = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_led_device(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // string action = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_action();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -819,9 +830,9 @@ const char* Command::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
         } else
           goto handle_unusual;
         continue;
-      // string service = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+      // string service = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           auto str = _internal_mutable_service();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -858,34 +869,40 @@ uint8_t* Command::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string device_id = 1;
-  if (!this->_internal_device_id().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_device_id().data(), static_cast<int>(this->_internal_device_id().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "hubscreen.Command.device_id");
-    target = stream->WriteStringMaybeAliased(
-        1, this->_internal_device_id(), target);
+  // repeated .hubscreen.Switch_t sw_device = 1;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_sw_device_size()); i < n; i++) {
+    const auto& repfield = this->_internal_sw_device(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(1, repfield, repfield.GetCachedSize(), target, stream);
   }
 
-  // string action = 2;
+  // repeated .hubscreen.Led_t led_device = 2;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_led_device_size()); i < n; i++) {
+    const auto& repfield = this->_internal_led_device(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  // string action = 3;
   if (!this->_internal_action().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_action().data(), static_cast<int>(this->_internal_action().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "hubscreen.Command.action");
     target = stream->WriteStringMaybeAliased(
-        2, this->_internal_action(), target);
+        3, this->_internal_action(), target);
   }
 
-  // string service = 3;
+  // string service = 4;
   if (!this->_internal_service().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_service().data(), static_cast<int>(this->_internal_service().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "hubscreen.Command.service");
     target = stream->WriteStringMaybeAliased(
-        3, this->_internal_service(), target);
+        4, this->_internal_service(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -904,21 +921,28 @@ size_t Command::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string device_id = 1;
-  if (!this->_internal_device_id().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_device_id());
+  // repeated .hubscreen.Switch_t sw_device = 1;
+  total_size += 1UL * this->_internal_sw_device_size();
+  for (const auto& msg : this->_impl_.sw_device_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  // string action = 2;
+  // repeated .hubscreen.Led_t led_device = 2;
+  total_size += 1UL * this->_internal_led_device_size();
+  for (const auto& msg : this->_impl_.led_device_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // string action = 3;
   if (!this->_internal_action().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_action());
   }
 
-  // string service = 3;
+  // string service = 4;
   if (!this->_internal_service().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
@@ -943,9 +967,8 @@ void Command::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOB
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_device_id().empty()) {
-    _this->_internal_set_device_id(from._internal_device_id());
-  }
+  _this->_impl_.sw_device_.MergeFrom(from._impl_.sw_device_);
+  _this->_impl_.led_device_.MergeFrom(from._impl_.led_device_);
   if (!from._internal_action().empty()) {
     _this->_internal_set_action(from._internal_action());
   }
@@ -971,10 +994,8 @@ void Command::InternalSwap(Command* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.device_id_, lhs_arena,
-      &other->_impl_.device_id_, rhs_arena
-  );
+  _impl_.sw_device_.InternalSwap(&other->_impl_.sw_device_);
+  _impl_.led_device_.InternalSwap(&other->_impl_.led_device_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.action_, lhs_arena,
       &other->_impl_.action_, rhs_arena
