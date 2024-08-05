@@ -21,9 +21,9 @@ std::queue<hubscreen::Command> command_queue;
 class MasterService {
 public:
     void start() {
-        std::thread mqtt_thread(&MasterService::listen, this, MQTT_SERVICE_PORT);
-        std::thread ble_thread(&MasterService::listen, this, BLE_SERVICE_PORT);
-        std::thread gui_thread(&MasterService::listen, this, GUI_SERVICE_PORT);
+        std::thread mqtt_thread(&MasterService::listen_service, this, MQTT_SERVICE_PORT);
+        std::thread ble_thread(&MasterService::listen_service, this, BLE_SERVICE_PORT);
+        std::thread gui_thread(&MasterService::listen_service, this, GUI_SERVICE_PORT);
 
         mqtt_thread.detach();
         ble_thread.detach();
@@ -37,7 +37,7 @@ public:
     }
 
 private:
-    void listen(int port) {
+    void listen_service(int port) {
         int server_socket;
         struct sockaddr_in address;
         int opt = 1;
@@ -91,14 +91,14 @@ private:
             return;
         }
 
-        control_messages::Command command;
+        hubscreen::Command command;
         command.ParseFromArray(buffer, valread);
 
         std::unique_lock<std::mutex> lock(queue_mutex);
         command_queue.push(command);
         queue_cv.notify_one();
 
-        control_messages::Response response = processCommand(command);
+        hubscreen::Response response = processCommand(command);
 
         std::string response_str;
         response.SerializeToString(&response_str);
@@ -107,8 +107,8 @@ private:
         close(client_socket);
     }
 
-    control_messages::Response processCommand(const control_messages::Command& command) {
-        control_messages::Response response;
+    hubscreen::Response processCommand(const hubscreen::Command& command) {
+        hubscreen::Response response;
         response.set_status("Success");
         response.set_message("Command processed successfully");
 
@@ -128,8 +128,8 @@ private:
         return response;
     }
 
-    control_messages::Response sendToService(int port, const control_messages::Command& command) {
-        control_messages::Response response;
+    hubscreen::Response sendToService(int port, const hubscreen::Command& command) {
+        hubscreen::Response response;
         int sock = 0;
         struct sockaddr_in serv_addr;
 
@@ -142,11 +142,11 @@ private:
         serv_addr.sin_family = AF_INET;
         serv_addr.sin_port = htons(port);
 
-        if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
-            response.set_status("Failed");
-            response.set_message("Invalid address");
-            return response;
-        }
+        // if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
+        //     response.set_status("Failed");
+        //     response.set_message("Invalid address");
+        //     return response;
+        // }
 
         if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
             response.set_status("Failed");
@@ -181,10 +181,10 @@ private:
         }
 
         while (!command_queue.empty()) {
-            control_messages::Command command = command_queue.front();
+            hubscreen::Command command = command_queue.front();
             command_queue.pop();
 
-            control_messages::Response response = processCommand(command);
+            hubscreen::Response response = processCommand(command);
 
             std::cout << "Processed command: " << response.message() << std::endl;
         }
