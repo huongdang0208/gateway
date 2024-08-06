@@ -1,6 +1,5 @@
 paho-mqtt
 pysimplegui
-bluez
 pyserial
 dbus-python
 PyGObject
