@@ -5,3 +5,8 @@ dbus-python
 PyGObject
 bless
 pytz
+openai
+python-dotenv
+pynum
+pyttsx3
+pyaudio

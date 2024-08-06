@@ -12,7 +12,7 @@ sudo apt-get update || error_exit "Failed to update package index."
 
 # Install system dependencies
 echo "Installing system dependencies..."
-sudo apt-get install -y build-essential cmake || error_exit "Failed to install system dependencies."
+sudo apt-get install -y build-essential cmake portaudio19-dev || error_exit "Failed to install system dependencies."
 sudo apt install bluez || error_exit "Failed to install system dependencies."
 
 # Install Python dependencies

@@ -1,3 +1,4 @@
 env/
 __pychache__/
 server/mqtt/__pychache__/
+.env
