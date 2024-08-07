@@ -13,8 +13,10 @@ sudo apt-get update || error_exit "Failed to update package index."
 # Install system dependencies
 echo "Installing system dependencies..."
 sudo apt-get install -y build-essential cmake portaudio19-dev || error_exit "Failed to install system dependencies."
-sudo apt install bluez || error_exit "Failed to install system dependencies."
-
+sudo apt-get install -y portaudio19-dev flac || error_exit "Failed to install system dependencies."
+sudo apt-get install -y espeak libespeak1 libespeak-dev || error_exit "Failed to install audio dependencies."
+sudo apt install bluez || error_exit "Failed to install ble dependencies."
+pip install --no-cache-dir SpeechRecognition || error_exit "Failed to install speech recogniton dependencies."
 # Install Python dependencies
 echo "Installing Python dependencies..."
 if [ -f requirements.txt ]; then
