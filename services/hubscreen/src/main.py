@@ -4,7 +4,7 @@ import asyncio
 import pytz
 import socket
 from datetime import datetime
-# from protobuf import hubscreen_pb2
+from ..protobuf import hubscreen_pb2
 
 # Constants
 MASTER_SERVICE_PORT = 5003
@@ -183,6 +183,7 @@ class InterfaceGraphic:
             elif event == '-LIGHT-1-ON':
                     self.window['-LIGHT-1-ON'].update(visible=False)
                     self.window['-LIGHT-1-OFF'].update(visible=True)
+                    self.send_command_to_master(0, 'on', 'ble')
             elif event == '-LIGHT-1-OFF':
                     self.window['-LIGHT-1-OFF'].update(visible=False)
                     self.window['-LIGHT-1-ON'].update(visible=True)
@@ -217,6 +218,37 @@ class InterfaceGraphic:
     def timer_switch(self, switch_num):
         # Implement timer logic for switches
         pass
+    def send_command_to_master(device_id, action, service):
+        command = hubscreen_pb2.Command()
+        command.action = action
+        command.service = service
+        if service == 'ble':
+            light = hubscreen_pb2.Led_t()
+            light.pin = device_id
+            light.id = device_id
+            light.state = True if action == 'on' else False
+            command.led_device = light
+        else:
+            sw = hubscreen_pb2.Switch_t()
+            sw.pin = device_id
+            sw.id = device_id
+            sw.state = True if action == 'on' else False
+            command.led_device = sw
+
+        # Connect to Master Service
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_socket.connect(('localhost', MASTER_SERVICE_PORT))
+
+        # Send command
+        client_socket.send(command.SerializeToString())
+
+        # Receive response
+        data = client_socket.recv(1024)
+
+        response = hubscreen_pb2.Response()
+        response.ParseFromString(data)
+        client_socket.close()
+        return response
 
 def init_gui():
     InterfaceGraphic()
