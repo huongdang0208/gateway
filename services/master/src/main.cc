@@ -185,7 +185,8 @@ private:
             command_queue.pop();
 
             hubscreen::Response response = processCommand(command);
-
+            std::cout << "Service of command: " << command.service() << std::endl;
+            std::cout << "Action of command: " << command.action() << std::endl;
             std::cout << "Processed command: " << response.message() << std::endl;
         }
     }

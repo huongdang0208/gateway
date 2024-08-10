@@ -189,11 +189,10 @@ class Led_t final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kIdFieldNumber = 3,
-    kPinFieldNumber = 1,
-    kStateFieldNumber = 2,
+    kIdFieldNumber = 2,
+    kStateFieldNumber = 1,
   };
-  // string id = 3;
+  // string id = 2;
   void clear_id();
   const std::string& id() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -207,16 +206,7 @@ class Led_t final :
   std::string* _internal_mutable_id();
   public:
 
-  // int32 pin = 1;
-  void clear_pin();
-  int32_t pin() const;
-  void set_pin(int32_t value);
-  private:
-  int32_t _internal_pin() const;
-  void _internal_set_pin(int32_t value);
-  public:
-
-  // bool state = 2;
+  // bool state = 1;
   void clear_state();
   bool state() const;
   void set_state(bool value);
@@ -234,7 +224,6 @@ class Led_t final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
-    int32_t pin_;
     bool state_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -364,11 +353,10 @@ class Switch_t final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kIdFieldNumber = 6,
-    kPinFieldNumber = 4,
-    kStateFieldNumber = 5,
+    kIdFieldNumber = 4,
+    kStateFieldNumber = 3,
   };
-  // string id = 6;
+  // string id = 4;
   void clear_id();
   const std::string& id() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -382,16 +370,7 @@ class Switch_t final :
   std::string* _internal_mutable_id();
   public:
 
-  // int32 pin = 4;
-  void clear_pin();
-  int32_t pin() const;
-  void set_pin(int32_t value);
-  private:
-  int32_t _internal_pin() const;
-  void _internal_set_pin(int32_t value);
-  public:
-
-  // bool state = 5;
+  // bool state = 3;
   void clear_state();
   bool state() const;
   void set_state(bool value);
@@ -409,7 +388,6 @@ class Switch_t final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
-    int32_t pin_;
     bool state_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -539,12 +517,12 @@ class Command final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kSwDeviceFieldNumber = 1,
-    kLedDeviceFieldNumber = 2,
-    kActionFieldNumber = 3,
-    kServiceFieldNumber = 4,
+    kSwDeviceFieldNumber = 7,
+    kLedDeviceFieldNumber = 8,
+    kActionFieldNumber = 5,
+    kServiceFieldNumber = 6,
   };
-  // repeated .hubscreen.Switch_t sw_device = 1;
+  // repeated .hubscreen.Switch_t sw_device = 7;
   int sw_device_size() const;
   private:
   int _internal_sw_device_size() const;
@@ -562,7 +540,7 @@ class Command final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Switch_t >&
       sw_device() const;
 
-  // repeated .hubscreen.Led_t led_device = 2;
+  // repeated .hubscreen.Led_t led_device = 8;
   int led_device_size() const;
   private:
   int _internal_led_device_size() const;
@@ -580,7 +558,7 @@ class Command final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Led_t >&
       led_device() const;
 
-  // string action = 3;
+  // string action = 5;
   void clear_action();
   const std::string& action() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -594,7 +572,7 @@ class Command final :
   std::string* _internal_mutable_action();
   public:
 
-  // string service = 4;
+  // string service = 6;
   void clear_service();
   const std::string& service() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -748,10 +726,10 @@ class Response final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kStatusFieldNumber = 1,
-    kMessageFieldNumber = 2,
+    kStatusFieldNumber = 9,
+    kMessageFieldNumber = 10,
   };
-  // string status = 1;
+  // string status = 9;
   void clear_status();
   const std::string& status() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -765,7 +743,7 @@ class Response final :
   std::string* _internal_mutable_status();
   public:
 
-  // string message = 2;
+  // string message = 10;
   void clear_message();
   const std::string& message() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -805,27 +783,7 @@ class Response final :
 #endif  // __GNUC__
 // Led_t
 
-// int32 pin = 1;
-inline void Led_t::clear_pin() {
-  _impl_.pin_ = 0;
-}
-inline int32_t Led_t::_internal_pin() const {
-  return _impl_.pin_;
-}
-inline int32_t Led_t::pin() const {
-  // @@protoc_insertion_point(field_get:hubscreen.Led_t.pin)
-  return _internal_pin();
-}
-inline void Led_t::_internal_set_pin(int32_t value) {
-  
-  _impl_.pin_ = value;
-}
-inline void Led_t::set_pin(int32_t value) {
-  _internal_set_pin(value);
-  // @@protoc_insertion_point(field_set:hubscreen.Led_t.pin)
-}
-
-// bool state = 2;
+// bool state = 1;
 inline void Led_t::clear_state() {
   _impl_.state_ = false;
 }
@@ -845,7 +803,7 @@ inline void Led_t::set_state(bool value) {
   // @@protoc_insertion_point(field_set:hubscreen.Led_t.state)
 }
 
-// string id = 3;
+// string id = 2;
 inline void Led_t::clear_id() {
   _impl_.id_.ClearToEmpty();
 }
@@ -899,27 +857,7 @@ inline void Led_t::set_allocated_id(std::string* id) {
 
 // Switch_t
 
-// int32 pin = 4;
-inline void Switch_t::clear_pin() {
-  _impl_.pin_ = 0;
-}
-inline int32_t Switch_t::_internal_pin() const {
-  return _impl_.pin_;
-}
-inline int32_t Switch_t::pin() const {
-  // @@protoc_insertion_point(field_get:hubscreen.Switch_t.pin)
-  return _internal_pin();
-}
-inline void Switch_t::_internal_set_pin(int32_t value) {
-  
-  _impl_.pin_ = value;
-}
-inline void Switch_t::set_pin(int32_t value) {
-  _internal_set_pin(value);
-  // @@protoc_insertion_point(field_set:hubscreen.Switch_t.pin)
-}
-
-// bool state = 5;
+// bool state = 3;
 inline void Switch_t::clear_state() {
   _impl_.state_ = false;
 }
@@ -939,7 +877,7 @@ inline void Switch_t::set_state(bool value) {
   // @@protoc_insertion_point(field_set:hubscreen.Switch_t.state)
 }
 
-// string id = 6;
+// string id = 4;
 inline void Switch_t::clear_id() {
   _impl_.id_.ClearToEmpty();
 }
@@ -993,87 +931,7 @@ inline void Switch_t::set_allocated_id(std::string* id) {
 
 // Command
 
-// repeated .hubscreen.Switch_t sw_device = 1;
-inline int Command::_internal_sw_device_size() const {
-  return _impl_.sw_device_.size();
-}
-inline int Command::sw_device_size() const {
-  return _internal_sw_device_size();
-}
-inline void Command::clear_sw_device() {
-  _impl_.sw_device_.Clear();
-}
-inline ::hubscreen::Switch_t* Command::mutable_sw_device(int index) {
-  // @@protoc_insertion_point(field_mutable:hubscreen.Command.sw_device)
-  return _impl_.sw_device_.Mutable(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Switch_t >*
-Command::mutable_sw_device() {
-  // @@protoc_insertion_point(field_mutable_list:hubscreen.Command.sw_device)
-  return &_impl_.sw_device_;
-}
-inline const ::hubscreen::Switch_t& Command::_internal_sw_device(int index) const {
-  return _impl_.sw_device_.Get(index);
-}
-inline const ::hubscreen::Switch_t& Command::sw_device(int index) const {
-  // @@protoc_insertion_point(field_get:hubscreen.Command.sw_device)
-  return _internal_sw_device(index);
-}
-inline ::hubscreen::Switch_t* Command::_internal_add_sw_device() {
-  return _impl_.sw_device_.Add();
-}
-inline ::hubscreen::Switch_t* Command::add_sw_device() {
-  ::hubscreen::Switch_t* _add = _internal_add_sw_device();
-  // @@protoc_insertion_point(field_add:hubscreen.Command.sw_device)
-  return _add;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Switch_t >&
-Command::sw_device() const {
-  // @@protoc_insertion_point(field_list:hubscreen.Command.sw_device)
-  return _impl_.sw_device_;
-}
-
-// repeated .hubscreen.Led_t led_device = 2;
-inline int Command::_internal_led_device_size() const {
-  return _impl_.led_device_.size();
-}
-inline int Command::led_device_size() const {
-  return _internal_led_device_size();
-}
-inline void Command::clear_led_device() {
-  _impl_.led_device_.Clear();
-}
-inline ::hubscreen::Led_t* Command::mutable_led_device(int index) {
-  // @@protoc_insertion_point(field_mutable:hubscreen.Command.led_device)
-  return _impl_.led_device_.Mutable(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Led_t >*
-Command::mutable_led_device() {
-  // @@protoc_insertion_point(field_mutable_list:hubscreen.Command.led_device)
-  return &_impl_.led_device_;
-}
-inline const ::hubscreen::Led_t& Command::_internal_led_device(int index) const {
-  return _impl_.led_device_.Get(index);
-}
-inline const ::hubscreen::Led_t& Command::led_device(int index) const {
-  // @@protoc_insertion_point(field_get:hubscreen.Command.led_device)
-  return _internal_led_device(index);
-}
-inline ::hubscreen::Led_t* Command::_internal_add_led_device() {
-  return _impl_.led_device_.Add();
-}
-inline ::hubscreen::Led_t* Command::add_led_device() {
-  ::hubscreen::Led_t* _add = _internal_add_led_device();
-  // @@protoc_insertion_point(field_add:hubscreen.Command.led_device)
-  return _add;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Led_t >&
-Command::led_device() const {
-  // @@protoc_insertion_point(field_list:hubscreen.Command.led_device)
-  return _impl_.led_device_;
-}
-
-// string action = 3;
+// string action = 5;
 inline void Command::clear_action() {
   _impl_.action_.ClearToEmpty();
 }
@@ -1123,7 +981,7 @@ inline void Command::set_allocated_action(std::string* action) {
   // @@protoc_insertion_point(field_set_allocated:hubscreen.Command.action)
 }
 
-// string service = 4;
+// string service = 6;
 inline void Command::clear_service() {
   _impl_.service_.ClearToEmpty();
 }
@@ -1173,11 +1031,91 @@ inline void Command::set_allocated_service(std::string* service) {
   // @@protoc_insertion_point(field_set_allocated:hubscreen.Command.service)
 }
 
+// repeated .hubscreen.Switch_t sw_device = 7;
+inline int Command::_internal_sw_device_size() const {
+  return _impl_.sw_device_.size();
+}
+inline int Command::sw_device_size() const {
+  return _internal_sw_device_size();
+}
+inline void Command::clear_sw_device() {
+  _impl_.sw_device_.Clear();
+}
+inline ::hubscreen::Switch_t* Command::mutable_sw_device(int index) {
+  // @@protoc_insertion_point(field_mutable:hubscreen.Command.sw_device)
+  return _impl_.sw_device_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Switch_t >*
+Command::mutable_sw_device() {
+  // @@protoc_insertion_point(field_mutable_list:hubscreen.Command.sw_device)
+  return &_impl_.sw_device_;
+}
+inline const ::hubscreen::Switch_t& Command::_internal_sw_device(int index) const {
+  return _impl_.sw_device_.Get(index);
+}
+inline const ::hubscreen::Switch_t& Command::sw_device(int index) const {
+  // @@protoc_insertion_point(field_get:hubscreen.Command.sw_device)
+  return _internal_sw_device(index);
+}
+inline ::hubscreen::Switch_t* Command::_internal_add_sw_device() {
+  return _impl_.sw_device_.Add();
+}
+inline ::hubscreen::Switch_t* Command::add_sw_device() {
+  ::hubscreen::Switch_t* _add = _internal_add_sw_device();
+  // @@protoc_insertion_point(field_add:hubscreen.Command.sw_device)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Switch_t >&
+Command::sw_device() const {
+  // @@protoc_insertion_point(field_list:hubscreen.Command.sw_device)
+  return _impl_.sw_device_;
+}
+
+// repeated .hubscreen.Led_t led_device = 8;
+inline int Command::_internal_led_device_size() const {
+  return _impl_.led_device_.size();
+}
+inline int Command::led_device_size() const {
+  return _internal_led_device_size();
+}
+inline void Command::clear_led_device() {
+  _impl_.led_device_.Clear();
+}
+inline ::hubscreen::Led_t* Command::mutable_led_device(int index) {
+  // @@protoc_insertion_point(field_mutable:hubscreen.Command.led_device)
+  return _impl_.led_device_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Led_t >*
+Command::mutable_led_device() {
+  // @@protoc_insertion_point(field_mutable_list:hubscreen.Command.led_device)
+  return &_impl_.led_device_;
+}
+inline const ::hubscreen::Led_t& Command::_internal_led_device(int index) const {
+  return _impl_.led_device_.Get(index);
+}
+inline const ::hubscreen::Led_t& Command::led_device(int index) const {
+  // @@protoc_insertion_point(field_get:hubscreen.Command.led_device)
+  return _internal_led_device(index);
+}
+inline ::hubscreen::Led_t* Command::_internal_add_led_device() {
+  return _impl_.led_device_.Add();
+}
+inline ::hubscreen::Led_t* Command::add_led_device() {
+  ::hubscreen::Led_t* _add = _internal_add_led_device();
+  // @@protoc_insertion_point(field_add:hubscreen.Command.led_device)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Led_t >&
+Command::led_device() const {
+  // @@protoc_insertion_point(field_list:hubscreen.Command.led_device)
+  return _impl_.led_device_;
+}
+
 // -------------------------------------------------------------------
 
 // Response
 
-// string status = 1;
+// string status = 9;
 inline void Response::clear_status() {
   _impl_.status_.ClearToEmpty();
 }
@@ -1227,7 +1165,7 @@ inline void Response::set_allocated_status(std::string* status) {
   // @@protoc_insertion_point(field_set_allocated:hubscreen.Response.status)
 }
 
-// string message = 2;
+// string message = 10;
 inline void Response::clear_message() {
   _impl_.message_.ClearToEmpty();
 }

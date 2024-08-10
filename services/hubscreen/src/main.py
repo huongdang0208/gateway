@@ -1,10 +1,12 @@
+import sys
 import PySimpleGUI as sg
 import threading
 import asyncio
 import pytz
 import socket
 from datetime import datetime
-# from protobuf import hubscreen_pb2
+sys.path.append('../')  # This adds the parent directory to the path
+from protobuf import hubscreen_pb2 
 
 # Constants
 MASTER_SERVICE_PORT = 5003
@@ -183,9 +185,11 @@ class InterfaceGraphic:
             elif event == '-LIGHT-1-ON':
                     self.window['-LIGHT-1-ON'].update(visible=False)
                     self.window['-LIGHT-1-OFF'].update(visible=True)
+                    self.send_command_to_master('0', 'off', 'BLE')
             elif event == '-LIGHT-1-OFF':
                     self.window['-LIGHT-1-OFF'].update(visible=False)
                     self.window['-LIGHT-1-ON'].update(visible=True)
+                    self.send_command_to_master('0', 'on', 'BLE')
             elif event == '-LIGHT-2-ON':
                     self.window['-LIGHT-2-ON'].update(visible=False)
                     self.window['-LIGHT-2-OFF'].update(visible=True)
@@ -217,6 +221,36 @@ class InterfaceGraphic:
     def timer_switch(self, switch_num):
         # Implement timer logic for switches
         pass
+    def send_command_to_master(self, device_id, action, service):
+        command = hubscreen_pb2.Command()
+        command.action = action
+        command.service = service
+        if service == 'BLE':
+            light = hubscreen_pb2.Led_t()
+            # light.pin = device_id
+            light.id = str(device_id)
+            light.state = True if action == 'on' else False
+            command.led_device.append(light)
+        else:
+            sw = hubscreen_pb2.Switch_t()
+            # sw.pin = device_id
+            sw.id = str(device_id)
+            sw.state = True if action == 'on' else False
+            command.led_device.append(sw)
+
+        # Connect to Master Service
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_socket.connect(('localhost', MASTER_SERVICE_PORT))
+
+        # Send command
+        client_socket.send(command.SerializeToString())
+
+        # Receive response
+        # data = client_socket.recv(1024)
+
+        # response = hubscreen_pb2.Response()
+        # response.ParseFromString(data)
+        # client_socket.close()
 
 def init_gui():
     InterfaceGraphic()

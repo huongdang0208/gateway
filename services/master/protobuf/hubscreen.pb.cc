@@ -24,7 +24,6 @@ namespace hubscreen {
 PROTOBUF_CONSTEXPR Led_t::Led_t(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.pin_)*/0
   , /*decltype(_impl_.state_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct Led_tDefaultTypeInternal {
@@ -39,7 +38,6 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 PROTOBUF_CONSTEXPR Switch_t::Switch_t(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.pin_)*/0
   , /*decltype(_impl_.state_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct Switch_tDefaultTypeInternal {
@@ -93,7 +91,6 @@ const uint32_t TableStruct_hubscreen_2eproto::offsets[] PROTOBUF_SECTION_VARIABL
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::hubscreen::Led_t, _impl_.pin_),
   PROTOBUF_FIELD_OFFSET(::hubscreen::Led_t, _impl_.state_),
   PROTOBUF_FIELD_OFFSET(::hubscreen::Led_t, _impl_.id_),
   ~0u,  // no _has_bits_
@@ -102,7 +99,6 @@ const uint32_t TableStruct_hubscreen_2eproto::offsets[] PROTOBUF_SECTION_VARIABL
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::hubscreen::Switch_t, _impl_.pin_),
   PROTOBUF_FIELD_OFFSET(::hubscreen::Switch_t, _impl_.state_),
   PROTOBUF_FIELD_OFFSET(::hubscreen::Switch_t, _impl_.id_),
   ~0u,  // no _has_bits_
@@ -111,10 +107,10 @@ const uint32_t TableStruct_hubscreen_2eproto::offsets[] PROTOBUF_SECTION_VARIABL
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::hubscreen::Command, _impl_.sw_device_),
-  PROTOBUF_FIELD_OFFSET(::hubscreen::Command, _impl_.led_device_),
   PROTOBUF_FIELD_OFFSET(::hubscreen::Command, _impl_.action_),
   PROTOBUF_FIELD_OFFSET(::hubscreen::Command, _impl_.service_),
+  PROTOBUF_FIELD_OFFSET(::hubscreen::Command, _impl_.sw_device_),
+  PROTOBUF_FIELD_OFFSET(::hubscreen::Command, _impl_.led_device_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::hubscreen::Response, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -126,9 +122,9 @@ const uint32_t TableStruct_hubscreen_2eproto::offsets[] PROTOBUF_SECTION_VARIABL
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::hubscreen::Led_t)},
-  { 9, -1, -1, sizeof(::hubscreen::Switch_t)},
-  { 18, -1, -1, sizeof(::hubscreen::Command)},
-  { 28, -1, -1, sizeof(::hubscreen::Response)},
+  { 8, -1, -1, sizeof(::hubscreen::Switch_t)},
+  { 16, -1, -1, sizeof(::hubscreen::Command)},
+  { 26, -1, -1, sizeof(::hubscreen::Response)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -139,18 +135,17 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 
 const char descriptor_table_protodef_hubscreen_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\017hubscreen.proto\022\thubscreen\"/\n\005Led_t\022\013\n"
-  "\003pin\030\001 \001(\005\022\r\n\005state\030\002 \001(\010\022\n\n\002id\030\003 \001(\t\"2\n"
-  "\010Switch_t\022\013\n\003pin\030\004 \001(\005\022\r\n\005state\030\005 \001(\010\022\n\n"
-  "\002id\030\006 \001(\t\"x\n\007Command\022&\n\tsw_device\030\001 \003(\0132"
-  "\023.hubscreen.Switch_t\022$\n\nled_device\030\002 \003(\013"
-  "2\020.hubscreen.Led_t\022\016\n\006action\030\003 \001(\t\022\017\n\007se"
-  "rvice\030\004 \001(\t\"+\n\010Response\022\016\n\006status\030\001 \001(\t\022"
-  "\017\n\007message\030\002 \001(\tb\006proto3"
+  "\n\017hubscreen.proto\022\thubscreen\"\"\n\005Led_t\022\r\n"
+  "\005state\030\001 \001(\010\022\n\n\002id\030\002 \001(\t\"%\n\010Switch_t\022\r\n\005"
+  "state\030\003 \001(\010\022\n\n\002id\030\004 \001(\t\"x\n\007Command\022\016\n\006ac"
+  "tion\030\005 \001(\t\022\017\n\007service\030\006 \001(\t\022&\n\tsw_device"
+  "\030\007 \003(\0132\023.hubscreen.Switch_t\022$\n\nled_devic"
+  "e\030\010 \003(\0132\020.hubscreen.Led_t\"+\n\010Response\022\016\n"
+  "\006status\030\t \001(\t\022\017\n\007message\030\n \001(\tb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_hubscreen_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_hubscreen_2eproto = {
-    false, false, 304, descriptor_table_protodef_hubscreen_2eproto,
+    false, false, 278, descriptor_table_protodef_hubscreen_2eproto,
     "hubscreen.proto",
     &descriptor_table_hubscreen_2eproto_once, nullptr, 0, 4,
     schemas, file_default_instances, TableStruct_hubscreen_2eproto::offsets,
@@ -182,7 +177,6 @@ Led_t::Led_t(const Led_t& from)
   Led_t* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.id_){}
-    , decltype(_impl_.pin_){}
     , decltype(_impl_.state_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
@@ -195,9 +189,7 @@ Led_t::Led_t(const Led_t& from)
     _this->_impl_.id_.Set(from._internal_id(), 
       _this->GetArenaForAllocation());
   }
-  ::memcpy(&_impl_.pin_, &from._impl_.pin_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.state_) -
-    reinterpret_cast<char*>(&_impl_.pin_)) + sizeof(_impl_.state_));
+  _this->_impl_.state_ = from._impl_.state_;
   // @@protoc_insertion_point(copy_constructor:hubscreen.Led_t)
 }
 
@@ -207,7 +199,6 @@ inline void Led_t::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.id_){}
-    , decltype(_impl_.pin_){0}
     , decltype(_impl_.state_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
@@ -242,9 +233,7 @@ void Led_t::Clear() {
   (void) cached_has_bits;
 
   _impl_.id_.ClearToEmpty();
-  ::memset(&_impl_.pin_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.state_) -
-      reinterpret_cast<char*>(&_impl_.pin_)) + sizeof(_impl_.state_));
+  _impl_.state_ = false;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -254,25 +243,17 @@ const char* Led_t::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // int32 pin = 1;
+      // bool state = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.pin_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // bool state = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           _impl_.state_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // string id = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+      // string id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_id();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -309,26 +290,20 @@ uint8_t* Led_t::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int32 pin = 1;
-  if (this->_internal_pin() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_pin(), target);
-  }
-
-  // bool state = 2;
+  // bool state = 1;
   if (this->_internal_state() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(2, this->_internal_state(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(1, this->_internal_state(), target);
   }
 
-  // string id = 3;
+  // string id = 2;
   if (!this->_internal_id().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "hubscreen.Led_t.id");
     target = stream->WriteStringMaybeAliased(
-        3, this->_internal_id(), target);
+        2, this->_internal_id(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -347,19 +322,14 @@ size_t Led_t::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string id = 3;
+  // string id = 2;
   if (!this->_internal_id().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_id());
   }
 
-  // int32 pin = 1;
-  if (this->_internal_pin() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_pin());
-  }
-
-  // bool state = 2;
+  // bool state = 1;
   if (this->_internal_state() != 0) {
     total_size += 1 + 1;
   }
@@ -384,9 +354,6 @@ void Led_t::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF
 
   if (!from._internal_id().empty()) {
     _this->_internal_set_id(from._internal_id());
-  }
-  if (from._internal_pin() != 0) {
-    _this->_internal_set_pin(from._internal_pin());
   }
   if (from._internal_state() != 0) {
     _this->_internal_set_state(from._internal_state());
@@ -414,12 +381,7 @@ void Led_t::InternalSwap(Led_t* other) {
       &_impl_.id_, lhs_arena,
       &other->_impl_.id_, rhs_arena
   );
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(Led_t, _impl_.state_)
-      + sizeof(Led_t::_impl_.state_)
-      - PROTOBUF_FIELD_OFFSET(Led_t, _impl_.pin_)>(
-          reinterpret_cast<char*>(&_impl_.pin_),
-          reinterpret_cast<char*>(&other->_impl_.pin_));
+  swap(_impl_.state_, other->_impl_.state_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Led_t::GetMetadata() const {
@@ -445,7 +407,6 @@ Switch_t::Switch_t(const Switch_t& from)
   Switch_t* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.id_){}
-    , decltype(_impl_.pin_){}
     , decltype(_impl_.state_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
@@ -458,9 +419,7 @@ Switch_t::Switch_t(const Switch_t& from)
     _this->_impl_.id_.Set(from._internal_id(), 
       _this->GetArenaForAllocation());
   }
-  ::memcpy(&_impl_.pin_, &from._impl_.pin_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.state_) -
-    reinterpret_cast<char*>(&_impl_.pin_)) + sizeof(_impl_.state_));
+  _this->_impl_.state_ = from._impl_.state_;
   // @@protoc_insertion_point(copy_constructor:hubscreen.Switch_t)
 }
 
@@ -470,7 +429,6 @@ inline void Switch_t::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.id_){}
-    , decltype(_impl_.pin_){0}
     , decltype(_impl_.state_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
@@ -505,9 +463,7 @@ void Switch_t::Clear() {
   (void) cached_has_bits;
 
   _impl_.id_.ClearToEmpty();
-  ::memset(&_impl_.pin_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.state_) -
-      reinterpret_cast<char*>(&_impl_.pin_)) + sizeof(_impl_.state_));
+  _impl_.state_ = false;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -517,25 +473,17 @@ const char* Switch_t::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // int32 pin = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
-          _impl_.pin_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // bool state = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+      // bool state = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
           _impl_.state_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // string id = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+      // string id = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           auto str = _internal_mutable_id();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -572,26 +520,20 @@ uint8_t* Switch_t::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int32 pin = 4;
-  if (this->_internal_pin() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(4, this->_internal_pin(), target);
-  }
-
-  // bool state = 5;
+  // bool state = 3;
   if (this->_internal_state() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(5, this->_internal_state(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(3, this->_internal_state(), target);
   }
 
-  // string id = 6;
+  // string id = 4;
   if (!this->_internal_id().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "hubscreen.Switch_t.id");
     target = stream->WriteStringMaybeAliased(
-        6, this->_internal_id(), target);
+        4, this->_internal_id(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -610,19 +552,14 @@ size_t Switch_t::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string id = 6;
+  // string id = 4;
   if (!this->_internal_id().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_id());
   }
 
-  // int32 pin = 4;
-  if (this->_internal_pin() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_pin());
-  }
-
-  // bool state = 5;
+  // bool state = 3;
   if (this->_internal_state() != 0) {
     total_size += 1 + 1;
   }
@@ -647,9 +584,6 @@ void Switch_t::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTO
 
   if (!from._internal_id().empty()) {
     _this->_internal_set_id(from._internal_id());
-  }
-  if (from._internal_pin() != 0) {
-    _this->_internal_set_pin(from._internal_pin());
   }
   if (from._internal_state() != 0) {
     _this->_internal_set_state(from._internal_state());
@@ -677,12 +611,7 @@ void Switch_t::InternalSwap(Switch_t* other) {
       &_impl_.id_, lhs_arena,
       &other->_impl_.id_, rhs_arena
   );
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(Switch_t, _impl_.state_)
-      + sizeof(Switch_t::_impl_.state_)
-      - PROTOBUF_FIELD_OFFSET(Switch_t, _impl_.pin_)>(
-          reinterpret_cast<char*>(&_impl_.pin_),
-          reinterpret_cast<char*>(&other->_impl_.pin_));
+  swap(_impl_.state_, other->_impl_.state_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Switch_t::GetMetadata() const {
@@ -794,35 +723,9 @@ const char* Command::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // repeated .hubscreen.Switch_t sw_device = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
-          ptr -= 1;
-          do {
-            ptr += 1;
-            ptr = ctx->ParseMessage(_internal_add_sw_device(), ptr);
-            CHK_(ptr);
-            if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
-        } else
-          goto handle_unusual;
-        continue;
-      // repeated .hubscreen.Led_t led_device = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
-          ptr -= 1;
-          do {
-            ptr += 1;
-            ptr = ctx->ParseMessage(_internal_add_led_device(), ptr);
-            CHK_(ptr);
-            if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
-        } else
-          goto handle_unusual;
-        continue;
-      // string action = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+      // string action = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
           auto str = _internal_mutable_action();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -830,13 +733,39 @@ const char* Command::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
         } else
           goto handle_unusual;
         continue;
-      // string service = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+      // string service = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
           auto str = _internal_mutable_service();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "hubscreen.Command.service"));
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .hubscreen.Switch_t sw_device = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_sw_device(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<58>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .hubscreen.Led_t led_device = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_led_device(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<66>(ptr));
         } else
           goto handle_unusual;
         continue;
@@ -869,40 +798,40 @@ uint8_t* Command::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .hubscreen.Switch_t sw_device = 1;
-  for (unsigned i = 0,
-      n = static_cast<unsigned>(this->_internal_sw_device_size()); i < n; i++) {
-    const auto& repfield = this->_internal_sw_device(i);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(1, repfield, repfield.GetCachedSize(), target, stream);
-  }
-
-  // repeated .hubscreen.Led_t led_device = 2;
-  for (unsigned i = 0,
-      n = static_cast<unsigned>(this->_internal_led_device_size()); i < n; i++) {
-    const auto& repfield = this->_internal_led_device(i);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
-  }
-
-  // string action = 3;
+  // string action = 5;
   if (!this->_internal_action().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_action().data(), static_cast<int>(this->_internal_action().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "hubscreen.Command.action");
     target = stream->WriteStringMaybeAliased(
-        3, this->_internal_action(), target);
+        5, this->_internal_action(), target);
   }
 
-  // string service = 4;
+  // string service = 6;
   if (!this->_internal_service().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_service().data(), static_cast<int>(this->_internal_service().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "hubscreen.Command.service");
     target = stream->WriteStringMaybeAliased(
-        4, this->_internal_service(), target);
+        6, this->_internal_service(), target);
+  }
+
+  // repeated .hubscreen.Switch_t sw_device = 7;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_sw_device_size()); i < n; i++) {
+    const auto& repfield = this->_internal_sw_device(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(7, repfield, repfield.GetCachedSize(), target, stream);
+  }
+
+  // repeated .hubscreen.Led_t led_device = 8;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_led_device_size()); i < n; i++) {
+    const auto& repfield = this->_internal_led_device(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(8, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -921,28 +850,28 @@ size_t Command::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .hubscreen.Switch_t sw_device = 1;
+  // repeated .hubscreen.Switch_t sw_device = 7;
   total_size += 1UL * this->_internal_sw_device_size();
   for (const auto& msg : this->_impl_.sw_device_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  // repeated .hubscreen.Led_t led_device = 2;
+  // repeated .hubscreen.Led_t led_device = 8;
   total_size += 1UL * this->_internal_led_device_size();
   for (const auto& msg : this->_impl_.led_device_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  // string action = 3;
+  // string action = 5;
   if (!this->_internal_action().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_action());
   }
 
-  // string service = 4;
+  // string service = 6;
   if (!this->_internal_service().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
@@ -1107,9 +1036,9 @@ const char* Response::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string status = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+      // string status = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 74)) {
           auto str = _internal_mutable_status();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -1117,9 +1046,9 @@ const char* Response::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
         } else
           goto handle_unusual;
         continue;
-      // string message = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+      // string message = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 82)) {
           auto str = _internal_mutable_message();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -1156,24 +1085,24 @@ uint8_t* Response::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string status = 1;
+  // string status = 9;
   if (!this->_internal_status().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_status().data(), static_cast<int>(this->_internal_status().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "hubscreen.Response.status");
     target = stream->WriteStringMaybeAliased(
-        1, this->_internal_status(), target);
+        9, this->_internal_status(), target);
   }
 
-  // string message = 2;
+  // string message = 10;
   if (!this->_internal_message().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_message().data(), static_cast<int>(this->_internal_message().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "hubscreen.Response.message");
     target = stream->WriteStringMaybeAliased(
-        2, this->_internal_message(), target);
+        10, this->_internal_message(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1192,14 +1121,14 @@ size_t Response::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string status = 1;
+  // string status = 9;
   if (!this->_internal_status().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_status());
   }
 
-  // string message = 2;
+  // string message = 10;
   if (!this->_internal_message().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
