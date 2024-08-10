@@ -9,7 +9,7 @@ sys.path.append('../')  # This adds the parent directory to the path
 from protobuf import hubscreen_pb2 
 
 # Constants
-MASTER_SERVICE_PORT = 5003
+MASTER_SERVICE_SOCKET = "/tmp/gui_service_socket"
 IST = pytz.timezone('Asia/Ho_Chi_Minh')
 
 # Define a Singleton class for shared data
@@ -185,35 +185,42 @@ class InterfaceGraphic:
             elif event == '-LIGHT-1-ON':
                     self.window['-LIGHT-1-ON'].update(visible=False)
                     self.window['-LIGHT-1-OFF'].update(visible=True)
-                    self.send_command_to_master('0', 'off', 'BLE')
+                    self.send_command_to_master('led-0', False, 'BLE')
             elif event == '-LIGHT-1-OFF':
                     self.window['-LIGHT-1-OFF'].update(visible=False)
                     self.window['-LIGHT-1-ON'].update(visible=True)
-                    self.send_command_to_master('0', 'on', 'BLE')
+                    self.send_command_to_master('led-0', True, 'BLE')
             elif event == '-LIGHT-2-ON':
                     self.window['-LIGHT-2-ON'].update(visible=False)
                     self.window['-LIGHT-2-OFF'].update(visible=True)
+                    self.send_command_to_master('led-1', False, 'BLE')
             elif event == '-LIGHT-2-OFF':
                     self.window['-LIGHT-2-OFF'].update(visible=False)
                     self.window['-LIGHT-2-ON'].update(visible=True)
+                    self.send_command_to_master('led-1', True, 'BLE')
             elif event == '-LIGHT-3-ON':
                     self.window['-LIGHT-3-ON'].update(visible=False)
                     self.window['-LIGHT-3-OFF'].update(visible=True)
+                    self.send_command_to_master('led-2', False, 'BLE')
             elif event == '-LIGHT-3-OFF':
                     self.window['-LIGHT-3-OFF'].update(visible=False)
                     self.window['-LIGHT-3-ON'].update(visible=True)
+                    self.send_command_to_master('led-2', True, 'BLE')
             elif event == '-SW1-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     self.sw1_graphic_off = not self.sw1_graphic_off
                     action = 1 if self.sw1_graphic_off else 0
                     self.window['-SW1-TOGGLE-GRAPHIC-'].update(image_data=self.toggle_btn_off if self.sw1_graphic_off else self.toggle_btn_on)
+                    self.send_command_to_master('sw-0', self.sw1_graphic_off, 'MQTT')
             elif event == '-SW2-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     self.sw2_graphic_off = not self.sw2_graphic_off
                     action = 1 if self.sw2_graphic_off else 0
                     self.window['-SW2-TOGGLE-GRAPHIC-'].update(image_data=self.toggle_btn_off if self.sw2_graphic_off else self.toggle_btn_on)
+                    self.send_command_to_master('sw-1', self.sw2_graphic_off, 'MQTT')
             elif event == '-SW3-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     self.sw3_graphic_off = not self.sw3_graphic_off
                     action = 1 if self.sw3_graphic_off else 0
                     self.window['-SW3-TOGGLE-GRAPHIC-'].update(image_data=self.toggle_btn_off if self.sw3_graphic_off else self.toggle_btn_on)
+                    self.send_command_to_master('sw-2', self.sw3_graphic_off, 'MQTT')
             if self.pysimplegui_user_settings.get('-enable debugger-', False):
                 print("Debugger is enabled")
         self.window.close()
@@ -223,27 +230,39 @@ class InterfaceGraphic:
         pass
     def send_command_to_master(self, device_id, action, service):
         command = hubscreen_pb2.Command()
-        command.action = action
+        command.action = 'turn on' if action else 'turn off'
         command.service = service
         if service == 'BLE':
             light = hubscreen_pb2.Led_t()
             # light.pin = device_id
             light.id = str(device_id)
-            light.state = True if action == 'on' else False
+            light.state = action
             command.led_device.append(light)
         else:
             sw = hubscreen_pb2.Switch_t()
             # sw.pin = device_id
             sw.id = str(device_id)
-            sw.state = True if action == 'on' else False
-            command.led_device.append(sw)
+            sw.state = action
+            command.sw_device.append(sw)
 
         # Connect to Master Service
-        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client_socket.connect(('localhost', MASTER_SERVICE_PORT))
+        client_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        try:
+            # Connect to the Master Service's Unix Domain Socket
+            client_socket.connect(MASTER_SERVICE_SOCKET)
 
-        # Send command
-        client_socket.send(command.SerializeToString())
+            # Serialize the command using Protocol Buffers
+            command_str = command.SerializeToString()
+
+            # Send the serialized command to the Master Service
+            client_socket.sendall(command_str)
+
+        except Exception as e:
+            print(f"Error communicating with Master Service: {e}")
+
+        finally:
+            # Close the client socket
+            client_socket.close()
 
         # Receive response
         # data = client_socket.recv(1024)

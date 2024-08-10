@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package hubscreen;
+
+message Led_t {
+    bool state = 1;
+    string id = 2;
+}
+message Switch_t {
+    bool state = 3;
+    string id = 4;
+}
+message Command {
+    string action = 5;
+    string service = 6;
+    repeated Switch_t sw_device = 7;
+    repeated Led_t led_device = 8;
+}
+
+message Response {
+    string status = 9;
+    string message = 10;
+}
