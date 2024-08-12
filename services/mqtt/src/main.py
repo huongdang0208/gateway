@@ -11,7 +11,7 @@ from protobuf import hubscreen_pb2
 
 load_dotenv()
 
-MASTER_SERVICE_SOCKET = "/tmp/gui_service_socket"
+MASTER_SERVICE_SOCKET = "/tmp/mqtt_socket"
 
 class MQTTService:
     def __init__(self):
@@ -31,6 +31,8 @@ class MQTTService:
 
         # Create a socket for communication with the master service
         self.client_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.client_socket.connect(MASTER_SERVICE_SOCKET)
+        print('Connect successfully')
 
     def publish_single_message(self, topic, message):
         print(f"Publishing to topic: {topic}, message: {message}")
@@ -67,42 +69,34 @@ class MQTTService:
         while client.loop() == 0:
             pass
 
-    def receive_command_from_master(self):
-        try:
-            # Connect to the master service Unix Domain Socket
-            self.client_socket.connect(MASTER_SERVICE_SOCKET)
-            print('Connect successfully')
-            while True:
-                # Receive command from the master service
-                command_data = self.client_socket.recv(1024)
+    def listen_for_commands(self):
+        # Ensure the socket path is cleared before binding
+        if os.path.exists(MASTER_SERVICE_SOCKET):
+            os.remove(MASTER_SERVICE_SOCKET)
 
-                if not command_data:
-                    break
+        # Create a Unix Domain Socket
+        server_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        server_sock.bind(MASTER_SERVICE_SOCKET)
+        server_sock.listen(5)
 
-                # Parse the command using Protocol Buffers
+        print("Listening for commands from master service...")
+
+        while True:
+            client_sock, _ = server_sock.accept()
+            data = client_sock.recv(1024)
+            if data:
+                # Parse the received data as a Command message using Protobuf
                 command = hubscreen_pb2.Command()
-                command.ParseFromString(command_data)
+                command.ParseFromString(data)
+                print(f"Received command: {command}")
 
-                # Debug: Print received command details
-                print(f"Received command from master: Service={command.service}, Action={command.action}")
-
-                # Publish the message based on the command
-                if command.service == "MQTT" and command.action == "Publish":
-                    self.publish_single_message(command.payload, "Hello from MQTT Service!")
-                elif command.service == "MQTT" and command.action == "Custom":
-                    self.publish_single_message(command.payload, "Custom message from MQTT Service!")
-
-        except Exception as e:
-            print(f"Error communicating with Master Service: {e}")
-        finally:
-            # Close the client socket when done
-            self.client_socket.close()
+            client_sock.close()
 
     def run(self):
         """Run the MQTT Service."""
         print('Start thread command')
         # Start a separate thread to listen for commands from the master
-        command_thread = threading.Thread(target=self.receive_command_from_master)
+        command_thread = threading.Thread(target=self.listen_for_commands)
         command_thread.start()
 
         # Main loop for processing MQTT-related tasks

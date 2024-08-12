@@ -9,7 +9,7 @@ sys.path.append('../')  # This adds the parent directory to the path
 from protobuf import hubscreen_pb2 
 
 # Constants
-MASTER_SERVICE_SOCKET = "/tmp/gui_service_socket"
+MASTER_SERVICE_SOCKET = "/tmp/gui_socket"
 IST = pytz.timezone('Asia/Ho_Chi_Minh')
 
 # Define a Singleton class for shared data
