@@ -5,26 +5,29 @@ import time
 import speech_recognition as sr
 import pyttsx3
 import numpy as np
-# from os.path import join, dirname
-# import matplotlib.pyplot as plt
-# ^ matplotlib is great for visualising data and for testing purposes but usually not needed for production
 
+# Load OpenAI API key from .env file
 load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
 model = 'gpt-4o-mini-2024-07-18'
+
 # Set up the speech recognition and text-to-speech engines
 r = sr.Recognizer()
+
+# Initialize pyttsx3 with 'espeak' driver for Linux
 engine = pyttsx3.init(driverName='espeak')
+
+# Configure pyttsx3 properties
 voice = engine.getProperty('voices')[1]
 engine.setProperty('voice', voice.id)
 name = "Halcyon"
-greetings = [f"whats up master {name}", 
-             "yeah?", 
+greetings = [f"What's up, Master {name}?", 
+             "Yeah?",
              "Well, hello there, Master of Puns and Jokes - how's it going today?",
              f"Ahoy there, Captain {name}! How's the ship sailing?",
              f"Bonjour, Monsieur {name}! Comment ça va? Wait, why the hell am I speaking French?" ]
 
-# Listen for the wake word "hey pos"
+# Listen for the wake word "Hello my assistant"
 def listen_for_wake_word(source):
     print("Listening for 'Hello my assistant'...")
 
@@ -54,7 +57,10 @@ def listen_and_respond(source):
                 continue
 
             # Send input to OpenAI API
-            response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": f"{text}"}]) 
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": f"{text}"}]
+            ) 
             response_text = response.choices[0].message.content
             print(f"OpenAI response: {response_text}")
 
