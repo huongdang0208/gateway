@@ -11,7 +11,7 @@ from protobuf import hubscreen_pb2
 
 load_dotenv()
 
-MASTER_SERVICE_SOCKET = "/tmp/mqtt_socket"
+MQTT_SERVICE_SOCKET = "/tmp/mqtt_socket"
 
 class MQTTService:
     def __init__(self):
@@ -28,11 +28,6 @@ class MQTTService:
         # Set up MQTT broker credentials from .env file
         self.username = os.getenv('MQTT_SERVER_USERNAME')
         self.password = os.getenv('MQTT_SERVER_PWD')
-
-        # Create a socket for communication with the master service
-        self.client_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.client_socket.connect(MASTER_SERVICE_SOCKET)
-        print('Connect successfully')
 
     def publish_single_message(self, topic, message):
         print(f"Publishing to topic: {topic}, message: {message}")
@@ -68,15 +63,24 @@ class MQTTService:
         # Keep the client loop running
         while client.loop() == 0:
             pass
+    
+    def handle_command(self, command):
+        if command.service == "MQTT":
+            command_string = f"{command.action} - {command.sw_device}"
+            self.publish_single_message("hub/switches", command_string)
+        else:
+            command_string = f"{command.action} - {command.led_device}"
+            self.publish_single_message("hub/lights", command_string)
+
 
     def listen_for_commands(self):
         # Ensure the socket path is cleared before binding
-        if os.path.exists(MASTER_SERVICE_SOCKET):
-            os.remove(MASTER_SERVICE_SOCKET)
+        if os.path.exists(MQTT_SERVICE_SOCKET):
+            os.remove(MQTT_SERVICE_SOCKET)
 
         # Create a Unix Domain Socket
         server_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        server_sock.bind(MASTER_SERVICE_SOCKET)
+        server_sock.bind(MQTT_SERVICE_SOCKET)
         server_sock.listen(5)
 
         print("Listening for commands from master service...")
@@ -88,6 +92,7 @@ class MQTTService:
                 # Parse the received data as a Command message using Protobuf
                 command = hubscreen_pb2.Command()
                 command.ParseFromString(data)
+                self.handle_command(command)
                 print(f"Received command: {command}")
 
             client_sock.close()
