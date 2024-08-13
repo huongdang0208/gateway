@@ -208,19 +208,16 @@ class InterfaceGraphic:
                     self.send_command_to_master('led-2', True, 'BLE')
             elif event == '-SW1-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     self.sw1_graphic_off = not self.sw1_graphic_off
-                    action = 1 if self.sw1_graphic_off else 0
                     self.window['-SW1-TOGGLE-GRAPHIC-'].update(image_data=self.toggle_btn_off if self.sw1_graphic_off else self.toggle_btn_on)
-                    self.send_command_to_master('sw-0', self.sw1_graphic_off, 'MQTT')
+                    self.send_command_to_master('sw-0', not self.sw1_graphic_off, 'MQTT')
             elif event == '-SW2-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     self.sw2_graphic_off = not self.sw2_graphic_off
-                    action = 1 if self.sw2_graphic_off else 0
                     self.window['-SW2-TOGGLE-GRAPHIC-'].update(image_data=self.toggle_btn_off if self.sw2_graphic_off else self.toggle_btn_on)
-                    self.send_command_to_master('sw-1', self.sw2_graphic_off, 'MQTT')
+                    self.send_command_to_master('sw-1', not self.sw2_graphic_off, 'MQTT')
             elif event == '-SW3-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     self.sw3_graphic_off = not self.sw3_graphic_off
-                    action = 1 if self.sw3_graphic_off else 0
                     self.window['-SW3-TOGGLE-GRAPHIC-'].update(image_data=self.toggle_btn_off if self.sw3_graphic_off else self.toggle_btn_on)
-                    self.send_command_to_master('sw-2', self.sw3_graphic_off, 'MQTT')
+                    self.send_command_to_master('sw-2', not self.sw3_graphic_off, 'MQTT')
             if self.pysimplegui_user_settings.get('-enable debugger-', False):
                 print("Debugger is enabled")
         self.window.close()
@@ -230,19 +227,20 @@ class InterfaceGraphic:
         pass
     def send_command_to_master(self, device_id, action, service):
         command = hubscreen_pb2.Command()
+        print(action)
         command.action = 'turn on' if action else 'turn off'
         command.service = service
         if service == 'BLE':
             light = hubscreen_pb2.Led_t()
             # light.pin = device_id
             light.id = str(device_id)
-            light.state = action
+            light.state = True if action else False
             command.led_device.append(light)
         else:
             sw = hubscreen_pb2.Switch_t()
             # sw.pin = device_id
             sw.id = str(device_id)
-            sw.state = action
+            sw.state = True if action else False
             command.sw_device.append(sw)
 
         # Connect to Master Service
