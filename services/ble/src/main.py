@@ -11,142 +11,143 @@ from bless import (  # type: ignore
     GATTCharacteristicProperties,
     GATTAttributePermissions,
 )
-import hubscreen_pb2  # Import the generated Protobuf classes
+sys.path.append('../')  # This adds the parent directory to the path
+from protobuf import hubscreen_pb2
 
 # Constants
-BLE_SERVICE_SOCKET = "/tmp/ble_socket"
+BLE_SOCKET_PATH = "/tmp/ble_socket"
+
+server = BlessServer
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(name=__name__)
 
-class BLEService:
-    def __init__(self, loop: asyncio.AbstractEventLoop):
-        self.loop = loop
-        self.trigger: Union[asyncio.Event, threading.Event] = (
-            threading.Event() if sys.platform in ["darwin", "win32"] else asyncio.Event()
-        )
-        self.server = None
+trigger: Union[asyncio.Event, threading.Event]
+if sys.platform in ["darwin", "win32"]:
+    trigger = threading.Event()
+else:
+    trigger = asyncio.Event()
 
-    def initialize_server(self):
-        gatt: Dict = {
-            "A07498CA-AD5B-474E-940D-16F1FBE7E8CD": {
-                "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B": {
-                    "Properties": (
-                        GATTCharacteristicProperties.read
-                        | GATTCharacteristicProperties.write
-                        | GATTCharacteristicProperties.indicate
-                    ),
-                    "Permissions": (
-                        GATTAttributePermissions.readable
-                        | GATTAttributePermissions.writeable
-                    ),
-                    "Value": None,
-                }
-            },
-            "5c339364-c7be-4f23-b666-a8ff73a6a86a": {
-                "bfc0c92f-317d-4ba9-976b-cc11ce77b4ca": {
-                    "Properties": GATTCharacteristicProperties.read,
-                    "Permissions": GATTAttributePermissions.readable,
-                    "Value": bytearray(b"\x69"),
-                }
-            },
-        }
-        my_service_name = "Pi Service"
-        self.server = BlessServer(name=my_service_name, loop=self.loop)
-        self.server.read_request_func = self.read_request
-        self.server.write_request_func = self.write_request
+def read_request(characteristic: BlessGATTCharacteristic, **kwargs) -> bytearray:
+    logger.debug(f"Reading {characteristic.value}")
+    return characteristic.value
 
-        self.loop.run_until_complete(self.server.add_gatt(gatt))
+def write_request(characteristic: BlessGATTCharacteristic, value: Any, **kwargs):
+    logger.debug(f"Writing {value} to {characteristic}")
+    characteristic.value = value
+    logger.debug(f"Char value set to {characteristic.value}")
+    if characteristic.value == b"\x0f":
+        logger.debug("Nice")
+        trigger.set()
 
-    def read_request(self, characteristic: BlessGATTCharacteristic, **kwargs) -> bytearray:
-        logger.debug(f"Reading {characteristic.value}")
-        return characteristic.value
+def update_ble_characteristics(command):
+    """
+    Updates BLE characteristics based on the received command from the master service.
+    """
+    for led in command.led_device:
+        if led.id == "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B":  # Matching characteristic UUID
+            value = b"\x01" if led.state else b"\x00"
+            characteristic = server.get_characteristic(led.id)
+            if characteristic:
+                write_request(characteristic, value)
 
-    def write_request(self, characteristic: BlessGATTCharacteristic, value: Any, **kwargs):
-        logger.debug(f"Writing {value} to {characteristic}")
-        characteristic.value = value
-        logger.debug(f"Char value set to {characteristic.value}")
-        if characteristic.value == b"\x0f":
-            logger.debug("Nice")
-            self.trigger.set()
+    for sw in command.sw_device:
+        if sw.id == "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B":  # Matching characteristic UUID
+            value = b"\x01" if sw.state else b"\x00"
+            characteristic = server.get_characteristic(sw.id)
+            if characteristic:
+                write_request(characteristic, value)
 
-    def update_ble_characteristics(self, command: hubscreen_pb2.Command):
-        """
-        Updates BLE characteristics based on the received command from the master service.
-        """
-        for led in command.led_device:
-            if led.id == "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B":  # Matching characteristic UUID
-                value = b"\x01" if led.state else b"\x00"
-                characteristic = self.server.get_characteristic(led.id)
-                if characteristic:
-                    self.write_request(characteristic, value)
+async def listen_for_commands():
+    """
+    Listens for commands from the master service via Unix domain socket.
+    """
+    if os.path.exists(BLE_SOCKET_PATH):
+        os.remove(BLE_SOCKET_PATH)
 
-        for sw in command.sw_device:
-            if sw.id == "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B":  # Matching characteristic UUID
-                value = b"\x01" if sw.state else b"\x00"
-                characteristic = self.server.get_characteristic(sw.id)
-                if characteristic:
-                    self.write_request(characteristic, value)
+    server_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    server_sock.bind(BLE_SOCKET_PATH)
+    server_sock.listen(5)
 
-    async def listen_for_commands(self):
-        """
-        Listens for commands from the master service via Unix domain socket.
-        """
-        if os.path.exists(BLE_SERVICE_SOCKET):
-            os.remove(BLE_SERVICE_SOCKET)
+    logger.info("Listening for commands from master service...")
 
-        server_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        server_sock.bind(BLE_SERVICE_SOCKET)
-        server_sock.listen(5)
+    while True:
+        client_sock, _ = server_sock.accept()
+        data = client_sock.recv(1024)
+        if data:
+            command = hubscreen_pb2.Command()
+            command.ParseFromString(data)
+            logger.debug(f"Received command: {command}")
+            update_ble_characteristics(command)
 
-        logger.info("Listening for commands from master service...")
+        client_sock.close()
 
-        while True:
-            client_sock, _ = server_sock.accept()
-            data = client_sock.recv(1024)
-            if data:
-                command = hubscreen_pb2.Command()
-                command.ParseFromString(data)
-                logger.debug(f"Received command: {command}")
-                self.update_ble_characteristics(command)
+async def run(loop):
+    global server 
+    trigger.clear()
 
-            client_sock.close()
+    # Instantiate the server
+    gatt: Dict = {
+        "A07498CA-AD5B-474E-940D-16F1FBE7E8CD": {
+            "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B": {
+                "Properties": (
+                    GATTCharacteristicProperties.read
+                    | GATTCharacteristicProperties.write
+                    | GATTCharacteristicProperties.indicate
+                ),
+                "Permissions": (
+                    GATTAttributePermissions.readable
+                    | GATTAttributePermissions.writeable
+                ),
+                "Value": None,
+            }
+        },
+        "5c339364-c7be-4f23-b666-a8ff73a6a86a": {
+            "bfc0c92f-317d-4ba9-976b-cc11ce77b4ca": {
+                "Properties": GATTCharacteristicProperties.read,
+                "Permissions": GATTAttributePermissions.readable,
+                "Value": bytearray(b"\x69"),
+            }
+        },
+    }
+    my_service_name = "Pi Service"
+    server = BlessServer(name=my_service_name, loop=loop)
+    server.read_request_func = read_request
+    server.write_request_func = write_request
 
-    async def run(self):
-        self.trigger.clear()
-        self.initialize_server()
+    await server.add_gatt(gatt)
+    await server.start()
+    logger.debug(server.get_characteristic("51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B"))
+    logger.debug("Advertising")
+    logger.info(
+        "Write '0xF' to the advertised characteristic: "
+        + "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B"
+    )
 
-        await self.server.start()
-        logger.debug(self.server.get_characteristic("51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B"))
-        logger.debug("Advertising")
-        logger.info(
-            "Write '0xF' to the advertised characteristic: "
-            + "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B"
-        )
+    # Start listening for commands from master service
+    command_listener = asyncio.create_task(listen_for_commands())
 
-        # Start listening for commands from master service
-        command_listener = asyncio.create_task(self.listen_for_commands())
+    if trigger.__module__ == "threading":
+        trigger.wait()
+    else:
+        await trigger.wait()
 
-        if self.trigger.__module__ == "threading":
-            self.trigger.wait()
-        else:
-            await self.trigger.wait()
+    await asyncio.sleep(2)
+    logger.debug("Updating")
+    server.get_characteristic("51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B").value = bytearray(
+        b"i"
+    )
+    server.update_value(
+        "A07498CA-AD5B-474E-940D-16F1FBE7E8CD", "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B"
+    )
+    await asyncio.sleep(5)
+    await server.stop()
 
-        await asyncio.sleep(2)
-        logger.debug("Updating")
-        self.server.get_characteristic("51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B").value = bytearray(
-            b"i"
-        )
-        self.server.update_value(
-            "A07498CA-AD5B-474E-940D-16F1FBE7E8CD", "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B"
-        )
-        await asyncio.sleep(5)
-        await self.server.stop()
+    # Cancel the command listener task
+    command_listener.cancel()
 
-        # Cancel the command listener task
-        command_listener.cancel()
+    return server
 
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    ble_service = BLEService(loop)
-    loop.run_until_complete(ble_service.run())
+# Initial Bluetooth service
+loop = asyncio.get_event_loop()
+loop.run_until_complete(run(loop))
