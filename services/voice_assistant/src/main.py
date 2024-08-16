@@ -1,88 +1,101 @@
 import os
-import openai
-from dotenv import load_dotenv
+import sys
+import json
 import time
-import speech_recognition as sr
-import pyttsx3
-import numpy as np
+import cohere
+from dotenv import load_dotenv
+from vosk import Model, KaldiRecognizer
+import pyaudio
 
-# Load OpenAI API key from .env file
 load_dotenv()
-openai.api_key = os.getenv('OPENAI_API_KEY')
-model = 'gpt-4o-mini-2024-07-18'
+# openai.api_key = os.getenv('OPENAI_API_KEY')
+co = cohere.Client(os.getenv('COHERE_API_KEY'))
 
-# Set up the speech recognition and text-to-speech engines
-r = sr.Recognizer()
+# Path to Vosk model
+model_path = "/home/thuhuong/vosk-model-small-en-us-0.15"
 
-# Initialize pyttsx3 with 'espeak' driver for Linux
-engine = pyttsx3.init(driverName='espeak')
+class AIVoiceAssistant:
+    def __init__(self):
+        # Load the Vosk model
+        if not os.path.exists(model_path):
+            print(f"Please download the model from https://alphacephei.com/vosk/models and unpack it as {model_path}")
+            sys.exit(1)
 
-# Configure pyttsx3 properties
-voice = engine.getProperty('voices')[1]
-engine.setProperty('voice', voice.id)
-name = "Halcyon"
-greetings = [f"What's up, Master {name}?", 
-             "Yeah?",
-             "Well, hello there, Master of Puns and Jokes - how's it going today?",
-             f"Ahoy there, Captain {name}! How's the ship sailing?",
-             f"Bonjour, Monsieur {name}! Comment ça va? Wait, why the hell am I speaking French?" ]
+        self.model = Model(model_path)
+        self.recognizer = KaldiRecognizer(self.model, 16000)
 
-# Listen for the wake word "Hello my assistant"
-def listen_for_wake_word(source):
-    print("Listening for 'Hello my assistant'...")
+        # Initialize PyAudio
+        self.p = pyaudio.PyAudio()
+        self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=4096)
+        self.stream.start_stream()
 
-    while True:
-        audio = r.listen(source)
+    def listen_for_wake_word(self):
+        print("Listening for wake word...")
         try:
-            text = r.recognize_google(audio)
-            if "Hello my assistant" in text.lower():
-                print("Wake word detected.")
-                engine.say(np.random.choice(greetings))
-                engine.runAndWait()
-                listen_and_respond(source)
-                break
-        except sr.UnknownValueError:
-            pass
+            while True:
+                data = self.stream.read(4096)
+                if self.recognizer.AcceptWaveform(data):
+                    result = self.recognizer.Result()
+                    text = json.loads(result)['text']
+                    print(f"Recognized Text: {text}")
+                    if "hello" in text.lower():
+                        print("Wake word detected.")
+                        self.listen_for_command()
+                        break
 
-# Listen for input and respond with OpenAI API
-def listen_and_respond(source):
-    print("Listening...")
+        except KeyboardInterrupt:
+            print("Stopping...")
 
-    while True:
-        audio = r.listen(source)
+        finally:
+            self.cleanup()
+
+    def listen_for_command(self):
+        print("Listening for your command...")
+        start_time = time.time()
         try:
-            text = r.recognize_google(audio)
-            print(f"You said: {text}")
-            if not text:
-                continue
+            while True:
+                data = self.stream.read(4096)
+                if self.recognizer.AcceptWaveform(data):
+                    result = self.recognizer.Result()
+                    command = json.loads(result)['text']
+                    print(f"Recognized Command: {command}")
+                    self.get_openai_response(command)
+                    break
+                if time.time() - start_time > 5:
+                    print('No command found, back to sleep')
+                    self.listen_for_command()
+                    break
+
+        except KeyboardInterrupt:
+            print("Stopping...")
+
+    def get_openai_response(self, prompt):
+        try:
+            print(f"You said: {prompt}")
 
             # Send input to OpenAI API
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": f"{text}"}]
-            ) 
-            response_text = response.choices[0].message.content
-            print(f"OpenAI response: {response_text}")
+            # response = openai.ChatCompletion.create(
+            #     model="gpt-4o-mini-2024-07-18",
+            #     messages=[{"role": "user", "content": prompt}]
+            # )
+            # response_text = response.choices[0].message.content
+            response = co.chat(
+                message=prompt
+            )
+            print(f"OpenAI response: {response}")
 
-            # Speak the response
-            engine.say(response_text)
-            engine.runAndWait()
+            # After response, listen for the wake word again
+            self.listen_for_wake_word()
 
-            if not audio:
-                listen_for_wake_word(source)
-        except sr.UnknownValueError:
-            time.sleep(2)
-            print("Silence found, shutting up, listening...")
-            listen_for_wake_word(source)
-            break
-            
-        except sr.RequestError as e:
-            print(f"Could not request results; {e}")
-            engine.say(f"Could not request results; {e}")
-            engine.runAndWait()
-            listen_for_wake_word(source)
-            break
+        except Exception as e:
+            print(f"Error: {e}")
+            self.listen_for_wake_word()
 
-# Use the default microphone as the audio source
-with sr.Microphone() as source:
-    listen_for_wake_word(source)
+    def cleanup(self):
+        self.stream.stop_stream()
+        self.stream.close()
+        self.p.terminate()
+
+if __name__ == "__main__":
+    assistant = AIVoiceAssistant()
+    assistant.listen_for_wake_word()
