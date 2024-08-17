@@ -8,6 +8,7 @@
 #define GUI_SOCKET_PATH "/tmp/gui_socket"
 #define BLE_SOCKET_PATH "/tmp/ble_socket"
 #define MQTT_SOCKET_PATH "/tmp/mqtt_socket"
+#define AI_SOCKET_PATH "/tmp/ai_socket"
 
 void handle_command(const hubscreen::Command& command);
 void send_to_service(const std::string& service_socket_path, const hubscreen::Command& command);
@@ -20,11 +21,13 @@ int main() {
 
     // Start threads to listen to GUI, BLE, and MQTT services
     std::thread gui_listener(listen_to_gui);
+    std::thread ai_listener(listen_to_service, AI_SOCKET_PATH, "AI");
     std::thread ble_listener(listen_to_service, BLE_SOCKET_PATH, "BLE");
     std::thread mqtt_listener(listen_to_service, MQTT_SOCKET_PATH, "MQTT");
 
     // Join threads
     gui_listener.join();
+    ai_listener.join();
     ble_listener.join();
     mqtt_listener.join();
 
@@ -41,6 +44,8 @@ void handle_command(const hubscreen::Command& command) {
     } else if (command.service() == "MQTT") {
         std::cout << "Turn into MQTT" << std::endl;
         send_to_service(MQTT_SOCKET_PATH, command);
+    } else if (command.service() == "AI") {
+        std::cout << "Turn into AI" << std::endl;
     } else {
         std::cerr << "Unknown service: " << command.service() << std::endl;
     }

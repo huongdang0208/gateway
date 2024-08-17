@@ -9,7 +9,7 @@ sys.path.append('../')  # This adds the parent directory to the path
 from protobuf import hubscreen_pb2 
 
 # Constants
-MASTER_SERVICE_SOCKET = "/tmp/gui_socket"
+GUI_SERVICE_SOCKET = "/tmp/gui_socket"
 IST = pytz.timezone('Asia/Ho_Chi_Minh')
 
 # Define a Singleton class for shared data
@@ -185,39 +185,39 @@ class InterfaceGraphic:
             elif event == '-LIGHT-1-ON':
                     self.window['-LIGHT-1-ON'].update(visible=False)
                     self.window['-LIGHT-1-OFF'].update(visible=True)
-                    self.send_command_to_master('led-0', False, 'BLE')
+                    self.send_command_to_master('light-0', False, 'BLE')
             elif event == '-LIGHT-1-OFF':
                     self.window['-LIGHT-1-OFF'].update(visible=False)
                     self.window['-LIGHT-1-ON'].update(visible=True)
-                    self.send_command_to_master('led-0', True, 'BLE')
+                    self.send_command_to_master('light-0', True, 'BLE')
             elif event == '-LIGHT-2-ON':
                     self.window['-LIGHT-2-ON'].update(visible=False)
                     self.window['-LIGHT-2-OFF'].update(visible=True)
-                    self.send_command_to_master('led-1', False, 'BLE')
+                    self.send_command_to_master('light-1', False, 'BLE')
             elif event == '-LIGHT-2-OFF':
                     self.window['-LIGHT-2-OFF'].update(visible=False)
                     self.window['-LIGHT-2-ON'].update(visible=True)
-                    self.send_command_to_master('led-1', True, 'BLE')
+                    self.send_command_to_master('light-1', True, 'BLE')
             elif event == '-LIGHT-3-ON':
                     self.window['-LIGHT-3-ON'].update(visible=False)
                     self.window['-LIGHT-3-OFF'].update(visible=True)
-                    self.send_command_to_master('led-2', False, 'BLE')
+                    self.send_command_to_master('light-2', False, 'BLE')
             elif event == '-LIGHT-3-OFF':
                     self.window['-LIGHT-3-OFF'].update(visible=False)
                     self.window['-LIGHT-3-ON'].update(visible=True)
-                    self.send_command_to_master('led-2', True, 'BLE')
+                    self.send_command_to_master('light-2', True, 'BLE')
             elif event == '-SW1-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     self.sw1_graphic_off = not self.sw1_graphic_off
                     self.window['-SW1-TOGGLE-GRAPHIC-'].update(image_data=self.toggle_btn_off if self.sw1_graphic_off else self.toggle_btn_on)
-                    self.send_command_to_master('sw-0', not self.sw1_graphic_off, 'MQTT')
+                    self.send_command_to_master('switch-0', not self.sw1_graphic_off, 'MQTT')
             elif event == '-SW2-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     self.sw2_graphic_off = not self.sw2_graphic_off
                     self.window['-SW2-TOGGLE-GRAPHIC-'].update(image_data=self.toggle_btn_off if self.sw2_graphic_off else self.toggle_btn_on)
-                    self.send_command_to_master('sw-1', not self.sw2_graphic_off, 'MQTT')
+                    self.send_command_to_master('switch-1', not self.sw2_graphic_off, 'MQTT')
             elif event == '-SW3-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
                     self.sw3_graphic_off = not self.sw3_graphic_off
                     self.window['-SW3-TOGGLE-GRAPHIC-'].update(image_data=self.toggle_btn_off if self.sw3_graphic_off else self.toggle_btn_on)
-                    self.send_command_to_master('sw-2', not self.sw3_graphic_off, 'MQTT')
+                    self.send_command_to_master('switch-2', not self.sw3_graphic_off, 'MQTT')
             if self.pysimplegui_user_settings.get('-enable debugger-', False):
                 print("Debugger is enabled")
         self.window.close()
@@ -247,7 +247,7 @@ class InterfaceGraphic:
         client_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         try:
             # Connect to the Master Service's Unix Domain Socket
-            client_socket.connect(MASTER_SERVICE_SOCKET)
+            client_socket.connect(GUI_SERVICE_SOCKET)
 
             # Serialize the command using Protocol Buffers
             command_str = command.SerializeToString()
