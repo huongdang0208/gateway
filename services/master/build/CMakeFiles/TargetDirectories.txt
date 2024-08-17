@@ -1,3 +1,3 @@
-/home/thuhuong/hub_server/services/master/build/CMakeFiles/MasterService.dir
-/home/thuhuong/hub_server/services/master/build/CMakeFiles/edit_cache.dir
-/home/thuhuong/hub_server/services/master/build/CMakeFiles/rebuild_cache.dir
+/home/thuhuong/gateway/services/master/build/CMakeFiles/MasterService.dir
+/home/thuhuong/gateway/services/master/build/CMakeFiles/edit_cache.dir
+/home/thuhuong/gateway/services/master/build/CMakeFiles/rebuild_cache.dir
