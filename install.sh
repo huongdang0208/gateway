@@ -17,6 +17,8 @@ sudo apt-get install -y portaudio19-dev flac || error_exit "Failed to install sy
 sudo apt-get install -y espeak libespeak1 libespeak-dev || error_exit "Failed to install audio dependencies."
 sudo apt install bluez || error_exit "Failed to install ble dependencies."
 pip install --no-cache-dir SpeechRecognition || error_exit "Failed to install speech recogniton dependencies."
+python -m pip install cohere --upgrade error_exit "Failed to install speech recogniton dependencies."
+
 # Install Python dependencies
 echo "Installing Python dependencies..."
 if [ -f requirements.txt ]; then
