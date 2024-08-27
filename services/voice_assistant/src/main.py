@@ -128,7 +128,7 @@ class AIVoiceAssistant:
                     else:
                         self.get_openai_response(command)
                     break
-                if time.time() - start_time > 5:
+                if time.time() - start_time > 10:
                     print('No command found, back to sleep')
                     self.listen_for_command()
                     break

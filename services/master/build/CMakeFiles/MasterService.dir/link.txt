@@ -1,1 +1,1 @@
-/usr/bin/c++ CMakeFiles/MasterService.dir/src/main.cc.o CMakeFiles/MasterService.dir/hubscreen.pb.cc.o -o MasterService  -Wl,-rpath,/usr/local/lib /usr/local/lib/libprotobuf.so -lpthread 
+/usr/bin/c++ CMakeFiles/MasterService.dir/src/main.cc.o CMakeFiles/MasterService.dir/hubscreen.pb.cc.o -o MasterService  /usr/lib/x86_64-linux-gnu/libprotobuf.so -lpthread 

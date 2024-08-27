@@ -38,16 +38,16 @@ int main() {
 }
 
 void handle_command(const hubscreen::Command& command) {
-    if (command.service() == "BLE") {
+    if (command.receiver() == "BLE") {
         std::cout << "Turn into BLE" << std::endl;
         send_to_service(BLE_SOCKET_PATH, command);
-    } else if (command.service() == "MQTT") {
+    } else if (command.receiver() == "MQTT") {
         std::cout << "Turn into MQTT" << std::endl;
         send_to_service(MQTT_SOCKET_PATH, command);
-    } else if (command.service() == "AI") {
+    } else if (command.receiver() == "AI") {
         std::cout << "Turn into AI" << std::endl;
     } else {
-        std::cerr << "Unknown service: " << command.service() << std::endl;
+        std::cerr << "Unknown service: " << command.receiver() << std::endl;
     }
 }
 
@@ -76,6 +76,8 @@ void send_to_service(const std::string& service_socket_path, const hubscreen::Co
     if (send(service_sock, serialized_command.c_str(), serialized_command.size(), 0) == -1) {
         std::cerr << "Failed to send data to service: " << service_socket_path << std::endl;
     }
+
+    std::cout << "Sending successfully" << std::endl;
 
     close(service_sock);
 }
@@ -169,9 +171,9 @@ void listen_to_service(const std::string& service_socket_path, const std::string
         char buffer[1024];
         ssize_t bytes_received = recv(client_sock, buffer, sizeof(buffer), 0);
         if (bytes_received > 0) {
-            hubscreen::Response response;
-            if (response.ParseFromArray(buffer, bytes_received)) {
-                std::cout << "Received response from " << service_name << ": " << response.DebugString() << std::endl;
+            hubscreen::Command command;
+            if (command.ParseFromArray(buffer, bytes_received)) {
+                std::cout << "Received response from " << service_name << ": " << command.DebugString() << std::endl;
                 // Handle response from BLE or MQTT services
             } else {
                 std::cerr << "Failed to parse response from " << service_name << std::endl;
