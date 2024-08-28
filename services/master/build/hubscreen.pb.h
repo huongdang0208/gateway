@@ -190,6 +190,7 @@ class Led_t final :
 
   enum : int {
     kIdFieldNumber = 2,
+    kNameFieldNumber = 3,
     kStateFieldNumber = 1,
   };
   // string id = 2;
@@ -204,6 +205,20 @@ class Led_t final :
   const std::string& _internal_id() const;
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_id(const std::string& value);
   std::string* _internal_mutable_id();
+  public:
+
+  // string name = 3;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
   public:
 
   // bool state = 1;
@@ -224,6 +239,7 @@ class Led_t final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     bool state_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -353,10 +369,11 @@ class Switch_t final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kIdFieldNumber = 4,
-    kStateFieldNumber = 3,
+    kIdFieldNumber = 5,
+    kNameFieldNumber = 6,
+    kStateFieldNumber = 4,
   };
-  // string id = 4;
+  // string id = 5;
   void clear_id();
   const std::string& id() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -370,7 +387,21 @@ class Switch_t final :
   std::string* _internal_mutable_id();
   public:
 
-  // bool state = 3;
+  // string name = 6;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
+  // bool state = 4;
   void clear_state();
   bool state() const;
   void set_state(bool value);
@@ -388,6 +419,7 @@ class Switch_t final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     bool state_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -517,12 +549,13 @@ class Command final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kSwDeviceFieldNumber = 7,
-    kLedDeviceFieldNumber = 8,
-    kActionFieldNumber = 5,
-    kServiceFieldNumber = 6,
+    kSwDeviceFieldNumber = 10,
+    kLedDeviceFieldNumber = 11,
+    kActionFieldNumber = 7,
+    kSenderFieldNumber = 8,
+    kReceiverFieldNumber = 9,
   };
-  // repeated .hubscreen.Switch_t sw_device = 7;
+  // repeated .hubscreen.Switch_t sw_device = 10;
   int sw_device_size() const;
   private:
   int _internal_sw_device_size() const;
@@ -540,7 +573,7 @@ class Command final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Switch_t >&
       sw_device() const;
 
-  // repeated .hubscreen.Led_t led_device = 8;
+  // repeated .hubscreen.Led_t led_device = 11;
   int led_device_size() const;
   private:
   int _internal_led_device_size() const;
@@ -558,7 +591,7 @@ class Command final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Led_t >&
       led_device() const;
 
-  // string action = 5;
+  // string action = 7;
   void clear_action();
   const std::string& action() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -572,18 +605,32 @@ class Command final :
   std::string* _internal_mutable_action();
   public:
 
-  // string service = 6;
-  void clear_service();
-  const std::string& service() const;
+  // string sender = 8;
+  void clear_sender();
+  const std::string& sender() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_service(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_service();
-  PROTOBUF_NODISCARD std::string* release_service();
-  void set_allocated_service(std::string* service);
+  void set_sender(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_sender();
+  PROTOBUF_NODISCARD std::string* release_sender();
+  void set_allocated_sender(std::string* sender);
   private:
-  const std::string& _internal_service() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_service(const std::string& value);
-  std::string* _internal_mutable_service();
+  const std::string& _internal_sender() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_sender(const std::string& value);
+  std::string* _internal_mutable_sender();
+  public:
+
+  // string receiver = 9;
+  void clear_receiver();
+  const std::string& receiver() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_receiver(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_receiver();
+  PROTOBUF_NODISCARD std::string* release_receiver();
+  void set_allocated_receiver(std::string* receiver);
+  private:
+  const std::string& _internal_receiver() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_receiver(const std::string& value);
+  std::string* _internal_mutable_receiver();
   public:
 
   // @@protoc_insertion_point(class_scope:hubscreen.Command)
@@ -597,7 +644,8 @@ class Command final :
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Switch_t > sw_device_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Led_t > led_device_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr action_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr service_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sender_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr receiver_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -726,10 +774,10 @@ class Response final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kStatusFieldNumber = 9,
-    kMessageFieldNumber = 10,
+    kStatusFieldNumber = 12,
+    kMessageFieldNumber = 13,
   };
-  // string status = 9;
+  // string status = 12;
   void clear_status();
   const std::string& status() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -743,7 +791,7 @@ class Response final :
   std::string* _internal_mutable_status();
   public:
 
-  // string message = 10;
+  // string message = 13;
   void clear_message();
   const std::string& message() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -853,11 +901,61 @@ inline void Led_t::set_allocated_id(std::string* id) {
   // @@protoc_insertion_point(field_set_allocated:hubscreen.Led_t.id)
 }
 
+// string name = 3;
+inline void Led_t::clear_name() {
+  _impl_.name_.ClearToEmpty();
+}
+inline const std::string& Led_t::name() const {
+  // @@protoc_insertion_point(field_get:hubscreen.Led_t.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void Led_t::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:hubscreen.Led_t.name)
+}
+inline std::string* Led_t::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:hubscreen.Led_t.name)
+  return _s;
+}
+inline const std::string& Led_t::_internal_name() const {
+  return _impl_.name_.Get();
+}
+inline void Led_t::_internal_set_name(const std::string& value) {
+  
+  _impl_.name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* Led_t::_internal_mutable_name() {
+  
+  return _impl_.name_.Mutable(GetArenaForAllocation());
+}
+inline std::string* Led_t::release_name() {
+  // @@protoc_insertion_point(field_release:hubscreen.Led_t.name)
+  return _impl_.name_.Release();
+}
+inline void Led_t::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.name_.SetAllocated(name, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:hubscreen.Led_t.name)
+}
+
 // -------------------------------------------------------------------
 
 // Switch_t
 
-// bool state = 3;
+// bool state = 4;
 inline void Switch_t::clear_state() {
   _impl_.state_ = false;
 }
@@ -877,7 +975,7 @@ inline void Switch_t::set_state(bool value) {
   // @@protoc_insertion_point(field_set:hubscreen.Switch_t.state)
 }
 
-// string id = 4;
+// string id = 5;
 inline void Switch_t::clear_id() {
   _impl_.id_.ClearToEmpty();
 }
@@ -927,11 +1025,61 @@ inline void Switch_t::set_allocated_id(std::string* id) {
   // @@protoc_insertion_point(field_set_allocated:hubscreen.Switch_t.id)
 }
 
+// string name = 6;
+inline void Switch_t::clear_name() {
+  _impl_.name_.ClearToEmpty();
+}
+inline const std::string& Switch_t::name() const {
+  // @@protoc_insertion_point(field_get:hubscreen.Switch_t.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void Switch_t::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:hubscreen.Switch_t.name)
+}
+inline std::string* Switch_t::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:hubscreen.Switch_t.name)
+  return _s;
+}
+inline const std::string& Switch_t::_internal_name() const {
+  return _impl_.name_.Get();
+}
+inline void Switch_t::_internal_set_name(const std::string& value) {
+  
+  _impl_.name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* Switch_t::_internal_mutable_name() {
+  
+  return _impl_.name_.Mutable(GetArenaForAllocation());
+}
+inline std::string* Switch_t::release_name() {
+  // @@protoc_insertion_point(field_release:hubscreen.Switch_t.name)
+  return _impl_.name_.Release();
+}
+inline void Switch_t::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.name_.SetAllocated(name, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:hubscreen.Switch_t.name)
+}
+
 // -------------------------------------------------------------------
 
 // Command
 
-// string action = 5;
+// string action = 7;
 inline void Command::clear_action() {
   _impl_.action_.ClearToEmpty();
 }
@@ -981,57 +1129,107 @@ inline void Command::set_allocated_action(std::string* action) {
   // @@protoc_insertion_point(field_set_allocated:hubscreen.Command.action)
 }
 
-// string service = 6;
-inline void Command::clear_service() {
-  _impl_.service_.ClearToEmpty();
+// string sender = 8;
+inline void Command::clear_sender() {
+  _impl_.sender_.ClearToEmpty();
 }
-inline const std::string& Command::service() const {
-  // @@protoc_insertion_point(field_get:hubscreen.Command.service)
-  return _internal_service();
+inline const std::string& Command::sender() const {
+  // @@protoc_insertion_point(field_get:hubscreen.Command.sender)
+  return _internal_sender();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void Command::set_service(ArgT0&& arg0, ArgT... args) {
+void Command::set_sender(ArgT0&& arg0, ArgT... args) {
  
- _impl_.service_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:hubscreen.Command.service)
+ _impl_.sender_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:hubscreen.Command.sender)
 }
-inline std::string* Command::mutable_service() {
-  std::string* _s = _internal_mutable_service();
-  // @@protoc_insertion_point(field_mutable:hubscreen.Command.service)
+inline std::string* Command::mutable_sender() {
+  std::string* _s = _internal_mutable_sender();
+  // @@protoc_insertion_point(field_mutable:hubscreen.Command.sender)
   return _s;
 }
-inline const std::string& Command::_internal_service() const {
-  return _impl_.service_.Get();
+inline const std::string& Command::_internal_sender() const {
+  return _impl_.sender_.Get();
 }
-inline void Command::_internal_set_service(const std::string& value) {
+inline void Command::_internal_set_sender(const std::string& value) {
   
-  _impl_.service_.Set(value, GetArenaForAllocation());
+  _impl_.sender_.Set(value, GetArenaForAllocation());
 }
-inline std::string* Command::_internal_mutable_service() {
+inline std::string* Command::_internal_mutable_sender() {
   
-  return _impl_.service_.Mutable(GetArenaForAllocation());
+  return _impl_.sender_.Mutable(GetArenaForAllocation());
 }
-inline std::string* Command::release_service() {
-  // @@protoc_insertion_point(field_release:hubscreen.Command.service)
-  return _impl_.service_.Release();
+inline std::string* Command::release_sender() {
+  // @@protoc_insertion_point(field_release:hubscreen.Command.sender)
+  return _impl_.sender_.Release();
 }
-inline void Command::set_allocated_service(std::string* service) {
-  if (service != nullptr) {
+inline void Command::set_allocated_sender(std::string* sender) {
+  if (sender != nullptr) {
     
   } else {
     
   }
-  _impl_.service_.SetAllocated(service, GetArenaForAllocation());
+  _impl_.sender_.SetAllocated(sender, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.service_.IsDefault()) {
-    _impl_.service_.Set("", GetArenaForAllocation());
+  if (_impl_.sender_.IsDefault()) {
+    _impl_.sender_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:hubscreen.Command.service)
+  // @@protoc_insertion_point(field_set_allocated:hubscreen.Command.sender)
 }
 
-// repeated .hubscreen.Switch_t sw_device = 7;
+// string receiver = 9;
+inline void Command::clear_receiver() {
+  _impl_.receiver_.ClearToEmpty();
+}
+inline const std::string& Command::receiver() const {
+  // @@protoc_insertion_point(field_get:hubscreen.Command.receiver)
+  return _internal_receiver();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void Command::set_receiver(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.receiver_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:hubscreen.Command.receiver)
+}
+inline std::string* Command::mutable_receiver() {
+  std::string* _s = _internal_mutable_receiver();
+  // @@protoc_insertion_point(field_mutable:hubscreen.Command.receiver)
+  return _s;
+}
+inline const std::string& Command::_internal_receiver() const {
+  return _impl_.receiver_.Get();
+}
+inline void Command::_internal_set_receiver(const std::string& value) {
+  
+  _impl_.receiver_.Set(value, GetArenaForAllocation());
+}
+inline std::string* Command::_internal_mutable_receiver() {
+  
+  return _impl_.receiver_.Mutable(GetArenaForAllocation());
+}
+inline std::string* Command::release_receiver() {
+  // @@protoc_insertion_point(field_release:hubscreen.Command.receiver)
+  return _impl_.receiver_.Release();
+}
+inline void Command::set_allocated_receiver(std::string* receiver) {
+  if (receiver != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.receiver_.SetAllocated(receiver, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.receiver_.IsDefault()) {
+    _impl_.receiver_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:hubscreen.Command.receiver)
+}
+
+// repeated .hubscreen.Switch_t sw_device = 10;
 inline int Command::_internal_sw_device_size() const {
   return _impl_.sw_device_.size();
 }
@@ -1071,7 +1269,7 @@ Command::sw_device() const {
   return _impl_.sw_device_;
 }
 
-// repeated .hubscreen.Led_t led_device = 8;
+// repeated .hubscreen.Led_t led_device = 11;
 inline int Command::_internal_led_device_size() const {
   return _impl_.led_device_.size();
 }
@@ -1115,7 +1313,7 @@ Command::led_device() const {
 
 // Response
 
-// string status = 9;
+// string status = 12;
 inline void Response::clear_status() {
   _impl_.status_.ClearToEmpty();
 }
@@ -1165,7 +1363,7 @@ inline void Response::set_allocated_status(std::string* status) {
   // @@protoc_insertion_point(field_set_allocated:hubscreen.Response.status)
 }
 
-// string message = 10;
+// string message = 13;
 inline void Response::clear_message() {
   _impl_.message_.ClearToEmpty();
 }

@@ -1,4 +1,5 @@
 env/
 __pychache__/
-server/mqtt/__pychache__/
+services/mqtt/protobuf/__pychache__/
+services/master/build/
 .env
