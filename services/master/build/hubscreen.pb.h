@@ -221,13 +221,13 @@ class Led_t final :
   std::string* _internal_mutable_name();
   public:
 
-  // bool state = 1;
+  // int32 state = 1;
   void clear_state();
-  bool state() const;
-  void set_state(bool value);
+  int32_t state() const;
+  void set_state(int32_t value);
   private:
-  bool _internal_state() const;
-  void _internal_set_state(bool value);
+  int32_t _internal_state() const;
+  void _internal_set_state(int32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:hubscreen.Led_t)
@@ -240,7 +240,7 @@ class Led_t final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
-    bool state_;
+    int32_t state_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -401,13 +401,13 @@ class Switch_t final :
   std::string* _internal_mutable_name();
   public:
 
-  // bool state = 4;
+  // int32 state = 4;
   void clear_state();
-  bool state() const;
-  void set_state(bool value);
+  int32_t state() const;
+  void set_state(int32_t value);
   private:
-  bool _internal_state() const;
-  void _internal_set_state(bool value);
+  int32_t _internal_state() const;
+  void _internal_set_state(int32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:hubscreen.Switch_t)
@@ -420,7 +420,7 @@ class Switch_t final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
-    bool state_;
+    int32_t state_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -831,22 +831,22 @@ class Response final :
 #endif  // __GNUC__
 // Led_t
 
-// bool state = 1;
+// int32 state = 1;
 inline void Led_t::clear_state() {
-  _impl_.state_ = false;
+  _impl_.state_ = 0;
 }
-inline bool Led_t::_internal_state() const {
+inline int32_t Led_t::_internal_state() const {
   return _impl_.state_;
 }
-inline bool Led_t::state() const {
+inline int32_t Led_t::state() const {
   // @@protoc_insertion_point(field_get:hubscreen.Led_t.state)
   return _internal_state();
 }
-inline void Led_t::_internal_set_state(bool value) {
+inline void Led_t::_internal_set_state(int32_t value) {
   
   _impl_.state_ = value;
 }
-inline void Led_t::set_state(bool value) {
+inline void Led_t::set_state(int32_t value) {
   _internal_set_state(value);
   // @@protoc_insertion_point(field_set:hubscreen.Led_t.state)
 }
@@ -955,22 +955,22 @@ inline void Led_t::set_allocated_name(std::string* name) {
 
 // Switch_t
 
-// bool state = 4;
+// int32 state = 4;
 inline void Switch_t::clear_state() {
-  _impl_.state_ = false;
+  _impl_.state_ = 0;
 }
-inline bool Switch_t::_internal_state() const {
+inline int32_t Switch_t::_internal_state() const {
   return _impl_.state_;
 }
-inline bool Switch_t::state() const {
+inline int32_t Switch_t::state() const {
   // @@protoc_insertion_point(field_get:hubscreen.Switch_t.state)
   return _internal_state();
 }
-inline void Switch_t::_internal_set_state(bool value) {
+inline void Switch_t::_internal_set_state(int32_t value) {
   
   _impl_.state_ = value;
 }
-inline void Switch_t::set_state(bool value) {
+inline void Switch_t::set_state(int32_t value) {
   _internal_set_state(value);
   // @@protoc_insertion_point(field_set:hubscreen.Switch_t.state)
 }

@@ -1,4 +1,8 @@
+import sys
 import PySimpleGUI as sg
+sys.path.append('../')  # This adds the parent directory to the path
+from protobuf import hubscreen_pb2
+
 
 def run(self):
         # self.update_ip_address()
@@ -24,6 +28,14 @@ def run(self):
                     self.window[f'-{light_id.upper()}-ON'].update(visible=True)
                     self.list_lights[index].state = True  # Update the state in the list
                     self.send_command_to_master(light_id, True, "BLE")
+                    
+            for index, switch in enumerate(self.list_switches):
+                switch_id = switch.id
+                if event == f'-{switch_id.upper()}-TOGGLE-GRAPHIC-':
+                    # Update the GUI and light state
+                    self.list_switches[index].state = not self.list_switches[index].state  # Update the state in the list
+                    self.window[f'-{switch_id.upper()}-TOGGLE-GRAPHIC-'].update(image_data= self.toggle_btn_on if  self.list_switches[index].state else self.toggle_btn_off )
+                    self.send_command_to_master(self.list_switches[index].id, self.list_switches[index].state, 'MQTT')
             if event == '-LIGHTS-':
                 self.toggle_light_block = True
                 self.toggle_switch_block = False
@@ -39,18 +51,15 @@ def run(self):
                 self.toggle_switch_block = False
                 self.toggle_timer_block = True
                 self.update_block('-TOGGLE_TIMER_BLOCK-')
-            elif event == '-SW1-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
-                    self.sw1_graphic_off = not self.sw1_graphic_off
-                    self.window['-SW1-TOGGLE-GRAPHIC-'].update(image_data=self.toggle_btn_off if self.sw1_graphic_off else self.toggle_btn_on)
-                    self.send_command_to_master('switch-0', not self.sw1_graphic_off, 'MQTT')
-            elif event == '-SW2-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
-                    self.sw2_graphic_off = not self.sw2_graphic_off
-                    self.window['-SW2-TOGGLE-GRAPHIC-'].update(image_data=self.toggle_btn_off if self.sw2_graphic_off else self.toggle_btn_on)
-                    self.send_command_to_master('switch-1', not self.sw2_graphic_off, 'MQTT')
-            elif event == '-SW3-TOGGLE-GRAPHIC-':   # if the graphical button that changes images
-                    self.sw3_graphic_off = not self.sw3_graphic_off
-                    self.window['-SW3-TOGGLE-GRAPHIC-'].update(image_data=self.toggle_btn_off if self.sw3_graphic_off else self.toggle_btn_on)
-                    self.send_command_to_master('switch-2', not self.sw3_graphic_off, 'MQTT')
+            
+            # Event catcher for add device button
+            elif event == '-ADD-LIGHT-':
+                new_light = hubscreen_pb2.Led_t(state=False, id="-light-4", name="Light 4")
+                self.list_lights.append(new_light)
+                new_content = self.create_new_light_content_block()
+                print(self.list_lights)
+                self.window['-TOGGLE_LIGHT_BLOCK-'].update(new_content)
+
             if self.pysimplegui_user_settings.get('-enable debugger-', False):
                 print("Debugger is enabled")
         self.window.close()

@@ -3,12 +3,12 @@ syntax = "proto3";
 package hubscreen;
 
 message Led_t {
-    bool state = 1;
+    int32 state = 1;
     string id = 2;
     string name = 3;
 }
 message Switch_t {
-    bool state = 4;
+    int32 state = 4;
     string id = 5;
     string name = 6;
 }

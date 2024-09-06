@@ -65,7 +65,7 @@ class MQTTService:
             pass
     
     def handle_command(self, command):
-        if command.service == "MQTT":
+        if command.receiver == "MQTT":
             command_string = f"{command.action} - {command.sw_device}"
             self.publish_single_message("hub/switches", command_string)
         else:
