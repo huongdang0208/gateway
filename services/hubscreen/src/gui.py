@@ -1,10 +1,10 @@
 import sys
+import os
 import PySimpleGUI as sg
 import pytz
 import socket
 from datetime import datetime
-sys.path.append('../')  # This adds the parent directory to the path
-from protobuf import hubscreen_pb2
+import hubscreen_pb2
 from utils import run
 
 # Constants
@@ -55,18 +55,18 @@ class InterfaceGraphic:
                     'BORDER': 1, 'SLIDER_DEPTH': 0, 'PROGRESS_DEPTH': 0}
 
         # Create instances of Led_t
-        light1 = hubscreen_pb2.Led_t(state=0, id="-light-1", name="Light 1")
-        light2 = hubscreen_pb2.Led_t(state=1, id="-light-2", name="Light 2")
-        light3 = hubscreen_pb2.Led_t(state=0, id="-light-3", name="Light 3")
+        light1 = hubscreen_pb2.Led_t(state=0, id=1, name="Light 1")
+        light2 = hubscreen_pb2.Led_t(state=1, id=2, name="Light 2")
+        light3 = hubscreen_pb2.Led_t(state=0, id=3, name="Light 3")
 
         # Add these instances to the list
         self.list_lights.append(light1)
         self.list_lights.append(light2)
         self.list_lights.append(light3)
         
-        sw1 = hubscreen_pb2.Switch_t(state=0, id="sw1", name="Switch 1")
-        sw2 = hubscreen_pb2.Switch_t(state=0, id="sw2", name="Switch 2") 
-        sw3 = hubscreen_pb2.Switch_t(state=0, id="sw3", name="Switch 3")
+        sw1 = hubscreen_pb2.Switch_t(state=0, id=1, name="Switch 1")
+        sw2 = hubscreen_pb2.Switch_t(state=0, id=2, name="Switch 2") 
+        sw3 = hubscreen_pb2.Switch_t(state=0, id=3, name="Switch 3")
         
         self.list_switches.append(sw1)
         self.list_switches.append(sw2)
@@ -110,14 +110,14 @@ class InterfaceGraphic:
                     sg.Text(light.name, font="Any 14", pad=(10, 10)),  # Use dot notation
                     sg.Button(
                         image_filename="../icons/lighton.png",
-                        key=f'-{light.id.upper()}-ON',  # Use dot notation
+                        key=f'-{str(light.id).upper()}-ON',  # Use dot notation
                         visible= True if light.state == 1 else False,  # Use dot notation
                         border_width=0,
                         button_color="#0C0C0C",
                     ),
                     sg.Button(
                         image_filename="../icons/lightoff.png",
-                        key=f'-{light.id.upper()}-OFF',  # Use dot notation
+                        key=f'-{str(light.id).upper()}-OFF',  # Use dot notation
                         visible= True if light.state == 0 else False,  # Use dot notation
                         border_width=0,
                         button_color="#0C0C0C",
@@ -140,7 +140,7 @@ class InterfaceGraphic:
                     sg.Button(
                         '', 
                         image_data= toggle_btn_on if sw.state == 1 else toggle_btn_off, 
-                        key=f'-{sw.id.upper()}-TOGGLE-GRAPHIC-', 
+                        key=f'-{str(sw.id).upper()}-TOGGLE-GRAPHIC-', 
                         button_color=(sg.theme_background_color(), sg.theme_background_color()), 
                         border_width=0
                     )
@@ -251,14 +251,14 @@ class InterfaceGraphic:
         command.sender = 'hubscreen'
         if service == 'BLE':
             light = hubscreen_pb2.Led_t()
-            light.name = device_id
-            light.id = str(device_id)
+            light.name = f'Light - {device_id}'
+            light.id = device_id
             light.state = 1 if action else 0
             command.led_device.append(light)
         else:
             sw = hubscreen_pb2.Switch_t()
-            sw.name = device_id
-            sw.id = str(device_id)
+            sw.name =f'Switch - {device_id}'
+            sw.id = device_id
             sw.state = 1 if action else 0
             command.sw_device.append(sw)
 

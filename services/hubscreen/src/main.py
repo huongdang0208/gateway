@@ -1,7 +1,8 @@
 import sys
+import os
 import threading
 import asyncio
-sys.path.append('../')  # This adds the parent directory to the path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from gui import InterfaceGraphic
 
 def init_gui():
