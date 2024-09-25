@@ -6,8 +6,7 @@ import socket
 import paho.mqtt.publish as publish
 import paho.mqtt.client as paho
 from dotenv import load_dotenv
-sys.path.append('../')  # This adds the parent directory to the path
-from protobuf import hubscreen_pb2
+import hubscreen_pb2
 
 load_dotenv()
 

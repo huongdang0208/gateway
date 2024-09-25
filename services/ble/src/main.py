@@ -11,8 +11,7 @@ from bless import (  # type: ignore
     GATTCharacteristicProperties,
     GATTAttributePermissions,
 )
-sys.path.append('../')  # This adds the parent directory to the path
-from protobuf import hubscreen_pb2
+import hubscreen_pb2
 
 # Constants
 BLE_SOCKET_PATH = "/tmp/ble_socket"
