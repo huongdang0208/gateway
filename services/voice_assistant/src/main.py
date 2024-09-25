@@ -8,8 +8,7 @@ import cohere
 from dotenv import load_dotenv
 from vosk import Model, KaldiRecognizer
 import pyaudio
-sys.path.append('../')  # This adds the parent directory to the path
-from protobuf import hubscreen_pb2
+import hubscreen_pb2
 
 load_dotenv()
 # openai.api_key = os.getenv('OPENAI_API_KEY')

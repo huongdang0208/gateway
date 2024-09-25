@@ -25,7 +25,7 @@ PROTOBUF_CONSTEXPR Led_t::Led_t(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.state_)*/false
+  , /*decltype(_impl_.state_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct Led_tDefaultTypeInternal {
   PROTOBUF_CONSTEXPR Led_tDefaultTypeInternal()
@@ -40,7 +40,7 @@ PROTOBUF_CONSTEXPR Switch_t::Switch_t(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.state_)*/false
+  , /*decltype(_impl_.state_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct Switch_tDefaultTypeInternal {
   PROTOBUF_CONSTEXPR Switch_tDefaultTypeInternal()
@@ -142,8 +142,8 @@ static const ::_pb::Message* const file_default_instances[] = {
 
 const char descriptor_table_protodef_hubscreen_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\017hubscreen.proto\022\thubscreen\"0\n\005Led_t\022\r\n"
-  "\005state\030\001 \001(\010\022\n\n\002id\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\"3"
-  "\n\010Switch_t\022\r\n\005state\030\004 \001(\010\022\n\n\002id\030\005 \001(\t\022\014\n"
+  "\005state\030\001 \001(\005\022\n\n\002id\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\"3"
+  "\n\010Switch_t\022\r\n\005state\030\004 \001(\005\022\n\n\002id\030\005 \001(\t\022\014\n"
   "\004name\030\006 \001(\t\"\211\001\n\007Command\022\016\n\006action\030\007 \001(\t\022"
   "\016\n\006sender\030\010 \001(\t\022\020\n\010receiver\030\t \001(\t\022&\n\tsw_"
   "device\030\n \003(\0132\023.hubscreen.Switch_t\022$\n\nled"
@@ -217,7 +217,7 @@ inline void Led_t::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.id_){}
     , decltype(_impl_.name_){}
-    , decltype(_impl_.state_){false}
+    , decltype(_impl_.state_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.id_.InitDefault();
@@ -257,7 +257,7 @@ void Led_t::Clear() {
 
   _impl_.id_.ClearToEmpty();
   _impl_.name_.ClearToEmpty();
-  _impl_.state_ = false;
+  _impl_.state_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -267,10 +267,10 @@ const char* Led_t::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // bool state = 1;
+      // int32 state = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.state_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.state_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -324,10 +324,10 @@ uint8_t* Led_t::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // bool state = 1;
+  // int32 state = 1;
   if (this->_internal_state() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(1, this->_internal_state(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_state(), target);
   }
 
   // string id = 2;
@@ -380,9 +380,9 @@ size_t Led_t::ByteSizeLong() const {
         this->_internal_name());
   }
 
-  // bool state = 1;
+  // int32 state = 1;
   if (this->_internal_state() != 0) {
-    total_size += 1 + 1;
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_state());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -497,7 +497,7 @@ inline void Switch_t::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.id_){}
     , decltype(_impl_.name_){}
-    , decltype(_impl_.state_){false}
+    , decltype(_impl_.state_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.id_.InitDefault();
@@ -537,7 +537,7 @@ void Switch_t::Clear() {
 
   _impl_.id_.ClearToEmpty();
   _impl_.name_.ClearToEmpty();
-  _impl_.state_ = false;
+  _impl_.state_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -547,10 +547,10 @@ const char* Switch_t::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // bool state = 4;
+      // int32 state = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
-          _impl_.state_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.state_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -604,10 +604,10 @@ uint8_t* Switch_t::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // bool state = 4;
+  // int32 state = 4;
   if (this->_internal_state() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(4, this->_internal_state(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(4, this->_internal_state(), target);
   }
 
   // string id = 5;
@@ -660,9 +660,9 @@ size_t Switch_t::ByteSizeLong() const {
         this->_internal_name());
   }
 
-  // bool state = 4;
+  // int32 state = 4;
   if (this->_internal_state() != 0) {
-    total_size += 1 + 1;
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_state());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);

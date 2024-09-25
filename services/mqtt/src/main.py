@@ -6,8 +6,7 @@ import socket
 import paho.mqtt.publish as publish
 import paho.mqtt.client as paho
 from dotenv import load_dotenv
-sys.path.append('../')  # This adds the parent directory to the path
-from protobuf import hubscreen_pb2
+import hubscreen_pb2
 
 load_dotenv()
 
@@ -65,7 +64,7 @@ class MQTTService:
             pass
     
     def handle_command(self, command):
-        if command.service == "MQTT":
+        if command.receiver == "MQTT":
             command_string = f"{command.action} - {command.sw_device}"
             self.publish_single_message("hub/switches", command_string)
         else:
