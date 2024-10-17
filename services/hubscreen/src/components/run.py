@@ -1,6 +1,5 @@
-import sys
+import threading
 import PySimpleGUI as sg
-from hubscreen import Led, Switch, Command
 
 
 def run(self):
@@ -39,25 +38,34 @@ def run(self):
                 self.toggle_light_block = True
                 self.toggle_switch_block = False
                 self.toggle_timer_block = False
+                self.toggle_ai_block = False
                 self.update_block('-TOGGLE_LIGHT_BLOCK-')
             elif event == '-SWITCHES-':
                 self.toggle_light_block = False
                 self.toggle_switch_block = True
                 self.toggle_timer_block = False
+                self.toggle_ai_block = False
                 self.update_block('-TOGGLE_SWITCH_BLOCK-')
             elif event == '-TIMER-':
                 self.toggle_light_block = False
                 self.toggle_switch_block = False
                 self.toggle_timer_block = True
+                self.toggle_ai_block = False
                 self.update_block('-TOGGLE_TIMER_BLOCK-')
-            
-            # Event catcher for add device button
-            # elif event == '-ADD-LIGHT-':
-            #     new_light = hubscreen_pb2.Led_t(state=False, id="-light-4", name="Light 4")
-            #     self.list_lights.append(new_light)
-            #     new_content = self.create_new_light_content_block()
-            #     print(self.list_lights)
-            #     self.window['-TOGGLE_LIGHT_BLOCK-'].update(new_content)
+            elif event == '-ASSISTANT-':
+                self.toggle_light_block = False
+                self.toggle_switch_block = False
+                self.toggle_timer_block = False
+                self.toggle_ai_block = True
+                self.update_block('-TOGGLE_AI_BLOCK-')
+            elif event == '-ASSISTANT-START-':
+                self.ai_thread = threading.Thread(target=self.assistant.listen_for_wake_word)
+                self.ai_thread.start()
+                self.window['-WAKE-WORD-START-'].update(visible=True)
+            elif event == '-ASSISTANT-STOP-':
+                self.assistant.cleanup()
+                self.ai_thread.join()  # Wait for the thread to finish
+                # self.window['-WAKE-WORD-START-'].update(visible=False)
 
             if self.pysimplegui_user_settings.get('-enable debugger-', False):
                 print("Debugger is enabled")

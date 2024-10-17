@@ -68,5 +68,6 @@
         "span": "cpp",
         "valarray": "cpp",
         "variant": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "/home/thuhuong/hub_server/services/master"
 }

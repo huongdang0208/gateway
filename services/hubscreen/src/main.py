@@ -2,8 +2,8 @@ import sys
 import os
 import threading
 import asyncio
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from gui import InterfaceGraphic
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+from services.hubscreen.src.components.gui import InterfaceGraphic
 
 def init_gui():
     InterfaceGraphic()
