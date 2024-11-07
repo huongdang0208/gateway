@@ -5,9 +5,13 @@
 #include <thread>
 #include "hubscreen.pb.h" // Include the generated Protobuf classes
 
-#define GUI_SOCKET_PATH "/tmp/gui_socket"
+#define GUI_LISTEN_SOCKET_PATH "/tmp/gui_send_socket"
+#define GUI_SEND_SOCKET_PATH "/tmp/gui_listen_socket"
+
+#define MQTT_LISTEN_SOCKET_PATH "/tmp/mqtt_send_socket"
+#define MQTT_SEND_SOCKET_PATH "/tmp/mqtt_listen_socket"
+
 #define BLE_SOCKET_PATH "/tmp/ble_socket"
-#define MQTT_SOCKET_PATH "/tmp/mqtt_socket"
 #define AI_SOCKET_PATH "/tmp/ai_socket"
 
 class MasterService
@@ -56,22 +60,28 @@ private:
         {
             std::cout << "Turn into BLE" << std::endl;
             send_to_service(BLE_SOCKET_PATH, command);
-            send_to_service(MQTT_SOCKET_PATH, command);
+            send_to_service(MQTT_SEND_SOCKET_PATH, command);
         }
         else if (command.receiver() == "MQTT")
         {
             std::cout << "Turn into MQTT" << std::endl;
-            send_to_service(MQTT_SOCKET_PATH, command);
+            send_to_service(MQTT_SEND_SOCKET_PATH, command);
         }
         else if (command.receiver() == "AI")
         {
             std::cout << "Turn into AI" << std::endl;
+        }
+        else if (command.receiver() == "GUI")
+        {
+            std::cout << "Turn into GUI" << std::endl;
+            send_to_service(GUI_SEND_SOCKET_PATH, command);
         }
         else
         {
             std::cerr << "Unknown service: " << command.receiver() << std::endl;
         }
     }
+
     void listen_to_gui()
     {
         int server_sock = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -83,8 +93,8 @@ private:
 
         struct sockaddr_un server_addr;
         server_addr.sun_family = AF_UNIX;
-        strncpy(server_addr.sun_path, GUI_SOCKET_PATH, sizeof(server_addr.sun_path) - 1);
-        unlink(GUI_SOCKET_PATH); // Ensure the socket doesn't already exist
+        strncpy(server_addr.sun_path, GUI_LISTEN_SOCKET_PATH, sizeof(server_addr.sun_path) - 1);
+        unlink(GUI_LISTEN_SOCKET_PATH); // Ensure the socket doesn't already exist
 
         if (bind(server_sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
         {
@@ -121,7 +131,7 @@ private:
                 std::cout << "Command string: " << command_str << std::endl;
                 if (command.ParseFromArray(buffer, bytes_received))
                 {
-                    std::cout << "Received command: " << command.DebugString() << std::endl;
+                    std::cout << "Received command from GUI: " << command.DebugString() << std::endl;
                     handle_command(command);
                 }
                 else
@@ -188,6 +198,7 @@ private:
                 {
                     std::cout << "Received response from " << service_name << ": " << command.DebugString() << std::endl;
                     // Handle response from BLE or MQTT services
+                    handle_command(command);
                 }
                 else
                 {
@@ -218,10 +229,10 @@ public:
 
     void start()
     {
+        std::thread mqtt_listener(&MasterService::listen_to_service, this, MQTT_LISTEN_SOCKET_PATH, "MQTT");
         std::thread gui_listener(&MasterService::listen_to_gui, this);
         std::thread ai_listener(&MasterService::listen_to_service, this, AI_SOCKET_PATH, "AI");
         std::thread ble_listener(&MasterService::listen_to_service, this, BLE_SOCKET_PATH, "BLE");
-        std::thread mqtt_listener(&MasterService::listen_to_service, this, MQTT_SOCKET_PATH, "MQTT");
 
         gui_listener.join();
         ai_listener.join();
