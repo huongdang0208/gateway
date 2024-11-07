@@ -22,7 +22,7 @@ class MQTTService:
         ]
 
         self.host = "51.79.251.117"
-        self.port = 8885
+        self.port = 1883
 
         # Set up MQTT broker credentials from .env file
         self.username = os.getenv('MQTT_SERVER_USERNAME')

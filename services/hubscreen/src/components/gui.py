@@ -1,15 +1,21 @@
-import sys
+
 import os
+import requests
 import PySimpleGUI as sg
 import pytz
 import socket
 from datetime import datetime
-import hubscreen_pb2
-from utils import run
+import services.hubscreen.src.components.hubscreen_pb2 as hubscreen_pb2
+from services.hubscreen.src.components.run import run
+from services.hubscreen.src.components.network import is_connected
+from services.hubscreen.src.components.graphql import query_devices_by_license
+from  services.hubscreen.src.components.voice_assistant import AIVoiceAssistant
 
 # Constants
 GUI_SERVICE_SOCKET = "/tmp/gui_socket"
 IST = pytz.timezone('Asia/Ho_Chi_Minh')
+GRAPHQL_URL = os.getenv("GRAPHQL_ENDPOINT", "http://localhost:8080/graphql")
+HUB_LICENSE_KEY = os.getenv("HUB_LICENSE_KEY", "123456")
 
 # Define a Singleton class for shared data
 class Singleton:
@@ -30,11 +36,15 @@ class InterfaceGraphic:
         self.list_lights = []
         self.list_switches = []
         
+        self.assistant = AIVoiceAssistant()
+        
         # Initialize window components
         self.window = self.create_window()
         self.toggle_light_block = True
         self.toggle_switch_block = False
         self.toggle_timer_block = False
+        self.toggle_ai_block = False
+        
         self.sw1_graphic_off = True
         self.sw2_graphic_off = True
         self.sw3_graphic_off = True
@@ -42,6 +52,47 @@ class InterfaceGraphic:
         self.toggle_btn_on = b'iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABmJLR0QA/wD/AP+gvaeTAAAD+UlEQVRYCe1XzW8bVRCffbvrtbP+2NhOD7GzLm1VoZaPhvwDnKBUKlVyqAQ3/gAkDlWgPeVQEUCtEOIP4AaHSI0CqBWCQyXOdQuRaEFOk3g3IMWO46+tvZ+PeZs6apq4ipON1MNafrvreTPzfvub92bGAOEnZCBkIGQgZOClZoDrh25y5pdjruleEiX+A+rCaQo05bpuvJ/+IHJCSJtwpAHA/e269g8W5RbuzF6o7OVjF8D3Pr4tSSkyjcqfptPDMDKSleW4DKIggIAD5Yf+Oo4DNg6jbUBlvWLUNutAwZu1GnDjzrcXzGcX2AHw/emFUV6Sfk0pqcKpEydkKSo9q3tkz91uF5aWlo1Gs/mYc+i7tz4//19vsW2AU9O381TiioVCQcnlRsWeQhD3bJyH1/MiFLICyBHiuzQsD1arDvypW7DR9nzZmq47q2W95prm+I9fXfqXCX2AF2d+GhI98Y8xVX0lnxvl2UQQg0csb78ag3NjEeD8lXZ7pRTgftmCu4864OGzrq+5ZU0rCa3m+NzXlzvoAoB3+M+SyWQuaHBTEzKMq/3BMbgM+FuFCDBd9kK5XI5PJBKqLSev+POTV29lKB8rT0yMD0WjUSYLZLxzNgZvIHODOHuATP72Vwc6nQ4Uiw8MUeBU4nHS5HA6TYMEl02wPRcZBJuv+ya+UCZOIBaLwfCwQi1Mc4QXhA+PjWRkXyOgC1uIhW5Qd8yG2TK7kSweLcRGKKVnMNExWWBDTQsH9qVmtmzjiThQDs4Qz/OUSGTwcLwIQTLW58i+yOjpXDLqn1tgmDzXzRCk9eDenjo9yhvBmlizrB3V5dDrNTuY0A7opdndStqmaQLPC1WCGfShYRgHdLe32UrV3ntiH9LliuNrsToNlD4kruN8v75eafnSgC6Luo2+B3fGKskilj5muV6pNhk2Qqg5v7lZ51nBZhNBjGrbxfI1+La5t2JCzfD8RF1HTBGJXyDzs1MblONulEqPDVYXgwDIfNx91IUVbAbY837GMur+/k/XZ75UWmJ77ou5mfM1/0x7vP1ls9XQdF2z9uNsPzosXPNFA5m0/EX72TBSiqsWzN8z/GZB08pWq9VeEZ+0bjKb7RTD2i1P4u6r+bwypo5tZUumEcDAmuC3W8ezIqSGfE6g/sTd1W5p5bKjaWubrmWd29Fu9TD0GlYlmTx+8tTJoZeqYe2BZC1/JEU+wQR5TVEUPptJy3Fs+Vkzgf8lemqHumP1AnYoMZSwsVEz6o26i/G9Lgitb+ZmLu/YZtshfn5FZDPBCcJFQRQ+8ih9DctOFvdLIKHH6uUQnq9yhFu0bec7znZ+xpAGmuqef5/wd8hAyEDIQMjAETHwP7nQl2WnYk4yAAAAAElFTkSuQmCC'
 
         run(self)
+        
+    def create_devices_with_no_connection(self):
+        light1 = hubscreen_pb2.Led_t(state=0, id=1, name="Light 1", pin=1)
+        light2 = hubscreen_pb2.Led_t(state=1, id=2, name="Light 2", pin=2)
+        light3 = hubscreen_pb2.Led_t(state=0, id=3, name="Light 3", pin=3)
+
+        # Add these instances to the list
+        self.list_lights.append(light1)
+        self.list_lights.append(light2)
+        self.list_lights.append(light3)
+        
+        sw1 = hubscreen_pb2.Switch_t(state=0, id=1, name="Switch 1", pin=1)
+        sw2 = hubscreen_pb2.Switch_t(state=0, id=2, name="Switch 2", pin=2) 
+        sw3 = hubscreen_pb2.Switch_t(state=0, id=3, name="Switch 3", pin=3)
+        
+        self.list_switches.append(sw1)
+        self.list_switches.append(sw2)
+        self.list_switches.append(sw3)
+        
+    def query_devices_by_license(self, query, license):
+        try: 
+            response = requests.post(GRAPHQL_URL, json={"query": query, "variables": {"license": license}})
+            response_data = response.json()
+            print(response_data)
+            if response.status_code == 200 and 'data' in response_data:
+                devices = response_data['data']['devices_by_license']['items']
+                for device in devices:
+                    if device['protocol'] == 'BLE':
+                        light = hubscreen_pb2.Led_t(state=device['current_state'], id=device['id'], name=device['device_name'])
+                        self.list_lights.append(light)
+                    elif device['protocol'] == 'MQTT':
+                        switch = hubscreen_pb2.Switch_t(state=device['current_state'], id=device['id'], name=device['device_name'])
+                        self.list_switches.append(switch)
+                return devices
+            else:
+                self.create_devices_with_no_connection()
+                return None
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
+            self.create_devices_with_no_connection()
+            return None
 
     def create_window(self):
         # Define themes and colors
@@ -55,22 +106,10 @@ class InterfaceGraphic:
                     'BORDER': 1, 'SLIDER_DEPTH': 0, 'PROGRESS_DEPTH': 0}
 
         # Create instances of Led_t
-        light1 = hubscreen_pb2.Led_t(state=0, id=1, name="Light 1")
-        light2 = hubscreen_pb2.Led_t(state=1, id=2, name="Light 2")
-        light3 = hubscreen_pb2.Led_t(state=0, id=3, name="Light 3")
-
-        # Add these instances to the list
-        self.list_lights.append(light1)
-        self.list_lights.append(light2)
-        self.list_lights.append(light3)
-        
-        sw1 = hubscreen_pb2.Switch_t(state=0, id=1, name="Switch 1")
-        sw2 = hubscreen_pb2.Switch_t(state=0, id=2, name="Switch 2") 
-        sw3 = hubscreen_pb2.Switch_t(state=0, id=3, name="Switch 3")
-        
-        self.list_switches.append(sw1)
-        self.list_switches.append(sw2)
-        self.list_switches.append(sw3)
+        if is_connected():
+            self.query_devices_by_license(query_devices_by_license, HUB_LICENSE_KEY)
+        else:
+            self.create_devices_with_no_connection()
 
         # sg.theme_add_new('Dashboard', theme_dict)     # if using 4.20.0.1+
         sg.LOOK_AND_FEEL_TABLE['Dashboard'] = theme_dict
@@ -100,8 +139,9 @@ class InterfaceGraphic:
         switch_block = [[sg.Button(image_filename="../icons/switch.png", key='-SWITCHES-', border_width=0, button_color=GRAY_BACKGROUND, pad=(0, 0)), sg.Text('Switches', font='Any 14', background_color=GRAY_BACKGROUND)]]
 
         timer_block = [[sg.Button(image_filename="../icons/timer.png", key='-TIMER-', border_width=0, button_color=GRAY_BACKGROUND, pad=(0, 0)), sg.Text('Set Timer', font='Any 14', background_color=GRAY_BACKGROUND)]]
-
-
+        
+        ai_block = [[sg.Button(image_filename="../icons/assistant.png", key='-ASSISTANT-', border_width=0, button_color=GRAY_BACKGROUND, pad=(0, 0)), sg.Text('Assistant', font='Any 14', background_color=GRAY_BACKGROUND)]]
+        
         # Create the light content block dynamically
         light_content_block = []
         for light in self.list_lights:
@@ -124,12 +164,6 @@ class InterfaceGraphic:
                     ),
                 ]
             )
-        
-        # Add the "Add light" button at the end
-        light_content_block.append([
-            sg.Button(image_filename='../icons/add.png', key='-ADD-LIGHT-', border_width=0, button_color='#0C0C0C'),
-            sg.Text('Add light', font='Any 14', pad=(10, 10))
-        ])
 
         # Create the switch content block dynamically
         switch_content_block = []
@@ -147,24 +181,26 @@ class InterfaceGraphic:
                 ]
             )
 
-        # Add the "Add switch" button at the end
-        switch_content_block.append([
-            sg.Button(image_filename='../icons/add.png', key='-ADD-SWITCH', border_width=0, button_color='#0C0C0C'),
-            sg.Text('Add switch', font='Any 14', pad=(10, 10))
-        ])
-
         timer_content_block = [[sg.Text('Set timer for devices')],
                                 [sg.InputText(), sg.Button('Set Timer')]]
+        
+        ai_content_block = [[sg.Text('Press start to start Assistant', font='Any 14')],
+                            [sg.Button(image_filename="../icons/start.png", key='-ASSISTANT-START-')],
+                            [sg.Text('AI started! Say Hello to wake word...', key='-WAKE-WORD-START-', visible=False)],
+                            [sg.Text('Press stop to stop Assistant', font='Any 14')],
+                            [sg.Button(image_filename="../icons/stop.png", key='-ASSISTANT-STOP-')]]
 
         layout = [[sg.Column(top_banner, size=(960, 60), pad=(0,0), background_color=DARK_HEADER_COLOR)],
                 [sg.Column(top, size=(940, 90), pad=BPAD_TOP)],
                 [sg.Column([[sg.Column(light_block, size=(170,50), pad=BPAD_LEFT_INSIDE, background_color=GRAY_BACKGROUND)],
                             [sg.Column(switch_block, size=(170,50),  pad=BPAD_LEFT_INSIDE, background_color=GRAY_BACKGROUND)],
-                            [sg.Column(timer_block, size=(170,50),  pad=BPAD_LEFT_INSIDE, background_color=GRAY_BACKGROUND)]],
+                            [sg.Column(timer_block, size=(170,50),  pad=BPAD_LEFT_INSIDE, background_color=GRAY_BACKGROUND)],
+                            [sg.Column(ai_block, size=(170,50),  pad=BPAD_LEFT_INSIDE, background_color=GRAY_BACKGROUND)]],
                             pad=BPAD_LEFT, size=(170,320), background_color=BLACK_BACKGROUND),
                 sg.Column(light_content_block, size=(768, 320), pad=BPAD_RIGHT, key='-TOGGLE_LIGHT_BLOCK-', visible=True),
                 sg.Column(switch_content_block, size=(768, 320), pad=BPAD_RIGHT, key='-TOGGLE_SWITCH_BLOCK-', visible=False),
-                sg.Column(timer_content_block, size=(768, 320), pad=BPAD_RIGHT, key='-TOGGLE_TIMER_BLOCK-', visible=False)]]
+                sg.Column(timer_content_block, size=(768, 320), pad=BPAD_RIGHT, key='-TOGGLE_TIMER_BLOCK-', visible=False),
+                sg.Column(ai_content_block, size=(768, 320), pad=BPAD_RIGHT, key='-TOGGLE_AI_BLOCK-', visible=False),]]
 
         window = sg.Window('Dashboard Control', layout, margins=(0, 0), background_color=BORDER_COLOR, no_titlebar=True, grab_anywhere=True)
         return window
@@ -187,24 +223,33 @@ class InterfaceGraphic:
                     self.window[key].update(visible=self.toggle_light_block),
                     self.window['-TOGGLE_SWITCH_BLOCK-'].update(visible=self.toggle_switch_block),
                     self.window['-TOGGLE_TIMER_BLOCK-'].update(visible=self.toggle_timer_block),
+                    self.window['-TOGGLE_AI_BLOCK-'].update(visible=self.toggle_ai_block),
                 ),
                 '-TOGGLE_SWITCH_BLOCK-': lambda: (
                     self.window[key].update(visible=self.toggle_switch_block),
                     self.window['-TOGGLE_LIGHT_BLOCK-'].update(visible=self.toggle_light_block),
                     self.window['-TOGGLE_TIMER_BLOCK-'].update(visible=self.toggle_timer_block),
-                    print('update vision'),
+                    self.window['-TOGGLE_AI_BLOCK-'].update(visible=self.toggle_ai_block),
                 ),
                 '-TOGGLE_TIMER_BLOCK-': lambda: (
                     self.window[key].update(visible=self.toggle_timer_block),
                     self.window['-TOGGLE_SWITCH_BLOCK-'].update(visible=self.toggle_switch_block),
                     self.window['-TOGGLE_LIGHT_BLOCK-'].update(visible=self.toggle_light_block),
+                    self.window['-TOGGLE_AI_BLOCK-'].update(visible=self.toggle_ai_block),
                 ),
+                '-TOGGLE_AI_BLOCK-': lambda: (
+                    self.window[key].update(visible=self.toggle_ai_block),
+                    self.window['-TOGGLE_SWITCH_BLOCK-'].update(visible=self.toggle_switch_block),
+                    self.window['-TOGGLE_LIGHT_BLOCK-'].update(visible=self.toggle_light_block),
+                    self.window['-TOGGLE_TIMER_BLOCK-'].update(visible=self.toggle_timer_block),
+                )
             }
 
         cases.get(key, lambda: (
             self.window[key].update(visible=self.toggle_light_block),
             self.window['-TOGGLE_SWITCH_BLOCK-'].update(visible=self.toggle_switch_block),
             self.window['-TOGGLE_TIMER_BLOCK-'].update(visible=self.toggle_timer_block),
+            self.window['-TOGGLE_AI_BLOCK-'].update(visible=self.toggle_ai_block),
         ))()
 
 
@@ -234,12 +279,6 @@ class InterfaceGraphic:
                     ),
                 ]
             )
-        
-        # Add the "Add light" button at the end
-        light_content_block.append([
-            sg.Button(image_filename='../icons/add.png', key='-ADD-LIGHT-', border_width=0, button_color='#0C0C0C'),
-            sg.Text('Add light', font='Any 14', pad=(10, 10))
-        ])
         
         return light_content_block
 

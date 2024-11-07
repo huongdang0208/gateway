@@ -56,6 +56,7 @@ private:
         {
             std::cout << "Turn into BLE" << std::endl;
             send_to_service(BLE_SOCKET_PATH, command);
+            send_to_service(MQTT_SOCKET_PATH, command);
         }
         else if (command.receiver() == "MQTT")
         {

@@ -189,24 +189,11 @@ class Led_t final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kIdFieldNumber = 2,
     kNameFieldNumber = 3,
     kStateFieldNumber = 1,
+    kIdFieldNumber = 2,
+    kPinFieldNumber = 14,
   };
-  // string id = 2;
-  void clear_id();
-  const std::string& id() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_id(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_id();
-  PROTOBUF_NODISCARD std::string* release_id();
-  void set_allocated_id(std::string* id);
-  private:
-  const std::string& _internal_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_id(const std::string& value);
-  std::string* _internal_mutable_id();
-  public:
-
   // string name = 3;
   void clear_name();
   const std::string& name() const;
@@ -230,6 +217,24 @@ class Led_t final :
   void _internal_set_state(int32_t value);
   public:
 
+  // int32 id = 2;
+  void clear_id();
+  int32_t id() const;
+  void set_id(int32_t value);
+  private:
+  int32_t _internal_id() const;
+  void _internal_set_id(int32_t value);
+  public:
+
+  // int32 pin = 14;
+  void clear_pin();
+  int32_t pin() const;
+  void set_pin(int32_t value);
+  private:
+  int32_t _internal_pin() const;
+  void _internal_set_pin(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:hubscreen.Led_t)
  private:
   class _Internal;
@@ -238,9 +243,10 @@ class Led_t final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     int32_t state_;
+    int32_t id_;
+    int32_t pin_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -369,24 +375,11 @@ class Switch_t final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kIdFieldNumber = 5,
     kNameFieldNumber = 6,
     kStateFieldNumber = 4,
+    kIdFieldNumber = 5,
+    kPinFieldNumber = 15,
   };
-  // string id = 5;
-  void clear_id();
-  const std::string& id() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_id(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_id();
-  PROTOBUF_NODISCARD std::string* release_id();
-  void set_allocated_id(std::string* id);
-  private:
-  const std::string& _internal_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_id(const std::string& value);
-  std::string* _internal_mutable_id();
-  public:
-
   // string name = 6;
   void clear_name();
   const std::string& name() const;
@@ -410,6 +403,24 @@ class Switch_t final :
   void _internal_set_state(int32_t value);
   public:
 
+  // int32 id = 5;
+  void clear_id();
+  int32_t id() const;
+  void set_id(int32_t value);
+  private:
+  int32_t _internal_id() const;
+  void _internal_set_id(int32_t value);
+  public:
+
+  // int32 pin = 15;
+  void clear_pin();
+  int32_t pin() const;
+  void set_pin(int32_t value);
+  private:
+  int32_t _internal_pin() const;
+  void _internal_set_pin(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:hubscreen.Switch_t)
  private:
   class _Internal;
@@ -418,9 +429,10 @@ class Switch_t final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     int32_t state_;
+    int32_t id_;
+    int32_t pin_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -554,6 +566,7 @@ class Command final :
     kActionFieldNumber = 7,
     kSenderFieldNumber = 8,
     kReceiverFieldNumber = 9,
+    kUserIDFieldNumber = 14,
   };
   // repeated .hubscreen.Switch_t sw_device = 10;
   int sw_device_size() const;
@@ -633,6 +646,15 @@ class Command final :
   std::string* _internal_mutable_receiver();
   public:
 
+  // int32 userID = 14;
+  void clear_userid();
+  int32_t userid() const;
+  void set_userid(int32_t value);
+  private:
+  int32_t _internal_userid() const;
+  void _internal_set_userid(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:hubscreen.Command)
  private:
   class _Internal;
@@ -646,6 +668,7 @@ class Command final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr action_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sender_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr receiver_;
+    int32_t userid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -851,54 +874,24 @@ inline void Led_t::set_state(int32_t value) {
   // @@protoc_insertion_point(field_set:hubscreen.Led_t.state)
 }
 
-// string id = 2;
+// int32 id = 2;
 inline void Led_t::clear_id() {
-  _impl_.id_.ClearToEmpty();
+  _impl_.id_ = 0;
 }
-inline const std::string& Led_t::id() const {
+inline int32_t Led_t::_internal_id() const {
+  return _impl_.id_;
+}
+inline int32_t Led_t::id() const {
   // @@protoc_insertion_point(field_get:hubscreen.Led_t.id)
   return _internal_id();
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void Led_t::set_id(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+inline void Led_t::_internal_set_id(int32_t value) {
+  
+  _impl_.id_ = value;
+}
+inline void Led_t::set_id(int32_t value) {
+  _internal_set_id(value);
   // @@protoc_insertion_point(field_set:hubscreen.Led_t.id)
-}
-inline std::string* Led_t::mutable_id() {
-  std::string* _s = _internal_mutable_id();
-  // @@protoc_insertion_point(field_mutable:hubscreen.Led_t.id)
-  return _s;
-}
-inline const std::string& Led_t::_internal_id() const {
-  return _impl_.id_.Get();
-}
-inline void Led_t::_internal_set_id(const std::string& value) {
-  
-  _impl_.id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* Led_t::_internal_mutable_id() {
-  
-  return _impl_.id_.Mutable(GetArenaForAllocation());
-}
-inline std::string* Led_t::release_id() {
-  // @@protoc_insertion_point(field_release:hubscreen.Led_t.id)
-  return _impl_.id_.Release();
-}
-inline void Led_t::set_allocated_id(std::string* id) {
-  if (id != nullptr) {
-    
-  } else {
-    
-  }
-  _impl_.id_.SetAllocated(id, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.id_.IsDefault()) {
-    _impl_.id_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:hubscreen.Led_t.id)
 }
 
 // string name = 3;
@@ -951,6 +944,26 @@ inline void Led_t::set_allocated_name(std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:hubscreen.Led_t.name)
 }
 
+// int32 pin = 14;
+inline void Led_t::clear_pin() {
+  _impl_.pin_ = 0;
+}
+inline int32_t Led_t::_internal_pin() const {
+  return _impl_.pin_;
+}
+inline int32_t Led_t::pin() const {
+  // @@protoc_insertion_point(field_get:hubscreen.Led_t.pin)
+  return _internal_pin();
+}
+inline void Led_t::_internal_set_pin(int32_t value) {
+  
+  _impl_.pin_ = value;
+}
+inline void Led_t::set_pin(int32_t value) {
+  _internal_set_pin(value);
+  // @@protoc_insertion_point(field_set:hubscreen.Led_t.pin)
+}
+
 // -------------------------------------------------------------------
 
 // Switch_t
@@ -975,54 +988,24 @@ inline void Switch_t::set_state(int32_t value) {
   // @@protoc_insertion_point(field_set:hubscreen.Switch_t.state)
 }
 
-// string id = 5;
+// int32 id = 5;
 inline void Switch_t::clear_id() {
-  _impl_.id_.ClearToEmpty();
+  _impl_.id_ = 0;
 }
-inline const std::string& Switch_t::id() const {
+inline int32_t Switch_t::_internal_id() const {
+  return _impl_.id_;
+}
+inline int32_t Switch_t::id() const {
   // @@protoc_insertion_point(field_get:hubscreen.Switch_t.id)
   return _internal_id();
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void Switch_t::set_id(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+inline void Switch_t::_internal_set_id(int32_t value) {
+  
+  _impl_.id_ = value;
+}
+inline void Switch_t::set_id(int32_t value) {
+  _internal_set_id(value);
   // @@protoc_insertion_point(field_set:hubscreen.Switch_t.id)
-}
-inline std::string* Switch_t::mutable_id() {
-  std::string* _s = _internal_mutable_id();
-  // @@protoc_insertion_point(field_mutable:hubscreen.Switch_t.id)
-  return _s;
-}
-inline const std::string& Switch_t::_internal_id() const {
-  return _impl_.id_.Get();
-}
-inline void Switch_t::_internal_set_id(const std::string& value) {
-  
-  _impl_.id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* Switch_t::_internal_mutable_id() {
-  
-  return _impl_.id_.Mutable(GetArenaForAllocation());
-}
-inline std::string* Switch_t::release_id() {
-  // @@protoc_insertion_point(field_release:hubscreen.Switch_t.id)
-  return _impl_.id_.Release();
-}
-inline void Switch_t::set_allocated_id(std::string* id) {
-  if (id != nullptr) {
-    
-  } else {
-    
-  }
-  _impl_.id_.SetAllocated(id, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.id_.IsDefault()) {
-    _impl_.id_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:hubscreen.Switch_t.id)
 }
 
 // string name = 6;
@@ -1073,6 +1056,26 @@ inline void Switch_t::set_allocated_name(std::string* name) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:hubscreen.Switch_t.name)
+}
+
+// int32 pin = 15;
+inline void Switch_t::clear_pin() {
+  _impl_.pin_ = 0;
+}
+inline int32_t Switch_t::_internal_pin() const {
+  return _impl_.pin_;
+}
+inline int32_t Switch_t::pin() const {
+  // @@protoc_insertion_point(field_get:hubscreen.Switch_t.pin)
+  return _internal_pin();
+}
+inline void Switch_t::_internal_set_pin(int32_t value) {
+  
+  _impl_.pin_ = value;
+}
+inline void Switch_t::set_pin(int32_t value) {
+  _internal_set_pin(value);
+  // @@protoc_insertion_point(field_set:hubscreen.Switch_t.pin)
 }
 
 // -------------------------------------------------------------------
@@ -1307,6 +1310,26 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::hubscreen::Led_t >&
 Command::led_device() const {
   // @@protoc_insertion_point(field_list:hubscreen.Command.led_device)
   return _impl_.led_device_;
+}
+
+// int32 userID = 14;
+inline void Command::clear_userid() {
+  _impl_.userid_ = 0;
+}
+inline int32_t Command::_internal_userid() const {
+  return _impl_.userid_;
+}
+inline int32_t Command::userid() const {
+  // @@protoc_insertion_point(field_get:hubscreen.Command.userID)
+  return _internal_userid();
+}
+inline void Command::_internal_set_userid(int32_t value) {
+  
+  _impl_.userid_ = value;
+}
+inline void Command::set_userid(int32_t value) {
+  _internal_set_userid(value);
+  // @@protoc_insertion_point(field_set:hubscreen.Command.userID)
 }
 
 // -------------------------------------------------------------------

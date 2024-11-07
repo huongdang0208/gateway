@@ -6,11 +6,13 @@ message Led_t {
     int32 state = 1;
     int32 id = 2;
     string name = 3;
+    int32 pin = 14;
 }
 message Switch_t {
     int32 state = 4;
     int32 id = 5;
     string name = 6;
+    int32 pin = 15;
 }
 message Command {
     string action = 7;
