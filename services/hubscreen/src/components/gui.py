@@ -16,7 +16,7 @@ from  services.hubscreen.src.components.voice_assistant import AIVoiceAssistant
 GUI_LISTEN_SERVICE_SOCKET = "/tmp/gui_listen_socket"
 GUI_SEND_SERVICE_SOCKET = "/tmp/gui_send_socket"
 IST = pytz.timezone('Asia/Ho_Chi_Minh')
-GRAPHQL_URL = os.getenv("GRAPHQL_ENDPOINT", "http://localhost:8080/graphql")
+GRAPHQL_URL = os.getenv("GRAPHQL_ENDPOINT", "http://51.79.251.117:8080/graphql")
 HUB_LICENSE_KEY = os.getenv("HUB_LICENSE_KEY", "123456")
 
 # Define a Singleton class for shared data
