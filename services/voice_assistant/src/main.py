@@ -15,7 +15,7 @@ load_dotenv()
 co = cohere.Client(os.getenv('COHERE_API_KEY'))
 
 # Path to Vosk model
-model_path = "/home/thuhuong/vosk-model-small-en-us-0.15"
+model_path = "/home/thuhuong/gateway/vosk-model-small-en-us-0.15"
 AI_SERVICE_SOCKET = "/tmp/ai_socket"
 
 number_map = {
@@ -26,9 +26,28 @@ number_map = {
     "five": "5",
     "six": "6",
     "seven": "7",
-    "eight": "8",
+    "eight": "8", 
     "nine": "9",
     "zero": "0"
+}
+
+commands = {
+    1: "turn on the light one",
+    2: "turn off the light one",
+    3: "turn on the light two",
+    4: "turn on the light to",
+    5: "turn on the light too",
+    6: "turn off the light two",
+    7: "turn off the light to",
+    8: "turn off the light too",
+    9: "turn on the light three",
+    10: "turn off the light three",
+    11: "lower the window one",
+    12: "higher the window one",
+    13: "lower the window to",
+    14: "lower the window too",
+    15: "higher the window to",
+    16: "higher the window too",
 }
 
 class AIVoiceAssistant:
@@ -46,22 +65,24 @@ class AIVoiceAssistant:
         self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=4096)
         self.stream.start_stream()
 
-    def send_command_to_master (self, action, device_type, device_number):
+    def send_command_to_master (self, action, device_id, device_name, type):
 
         command = hubscreen_pb2.Command()
         command.action = action
         command.service = "MQTT"
 
-        if device_type == 'light':
+        if type == 'BLE':
             light = hubscreen_pb2.Led_t()
-            light.id = f"{device_type}-{device_number}"
-            light.state = True if action == "turn on" else False
+            light.id = device_id
+            light.name = device_name
+            light.state = 1 if action == "turn on" else 0
             command.led_device.append(light)
             
         else:
             sw = hubscreen_pb2.Switch_t()
-            sw.id = f("{device_type}-{device_number}")
-            sw.state = True if action == "turn on" else False
+            sw.id = device_id
+            sw.name = device_name
+            sw.state = 1 if action == "turn on" else 0
             command.sw_device.append(sw)
         client_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
@@ -111,22 +132,49 @@ class AIVoiceAssistant:
                     command = json.loads(result)['text']
                     print(f"Recognized Command: {command}")
 
-                    pattern = r'(turn on|turn off)\s+(the\s)?(light|switch)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|zero)'
-                    match = re.search(pattern, command, re.IGNORECASE)
+                    # pattern = r'(turn on|turn off)\s+(the\s)?(light|switch)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|zero)'
+                    # match = re.search(pattern, command, re.IGNORECASE)
+                    if command in commands.values():
+                        for key, value in commands.items():
+                            if value == command:
+                                print(f"Matching.....: {key}")
+                                if key == 1:
+                                    self.send_command_to_master("turn on", 4, "Light 1", "MQTT")
+                                elif key == 2:
+                                    self.send_command_to_master("turn off", 4, "Light 1", "MQTT")
+                                elif key == 3 | key == 4 | key == 5:
+                                    self.send_command_to_master("turn on", 5, "Light 2", "MQTT")
+                                elif key == 6 | key == 7 | key == 8:
+                                    self.send_command_to_master("turn off", 5, "Light 2", "MQTT")
+                                elif key == 9:
+                                    self.send_command_to_master("turn on", 6, "Light 3", "MQTT")
+                                elif key == 10:
+                                    self.send_command_to_master("turn off", 6, "Light 3", "MQTT")
+                                elif key == 11:
+                                    self.send_command_to_master("turn off", 1, "Window 1", "BLE")
+                                elif key == 12:
+                                    self.send_command_to_master("turn on", 1, "Window 1", "BLE")
+                                elif key == 13 | key == 14:
+                                    self.send_command_to_master("turn off", 2, "Window 2", "BLE")
+                                elif key == 15 | key == 16:
+                                    self.send_command_to_master("turn on", 2, "Window 2", "BLE")
+                                else:
+                                    print("No matching command")
+                                break
+                            
 
-                    if match:
-                        print("matching...")
-                        action = match.group(1)
-                        device_type = match.group(3)
-                        device_number = match.group(4).lower()
+                    # if match:
+                    #     action = match.group(1)
+                    #     device_type = match.group(3)
+                    #     device_number = match.group(4).lower()
 
-                        # Convert spelled-out numbers to digits
-                        if device_number in number_map:
-                            device_number = number_map[device_number]
-                        self.send_command_to_master(action, device_type, device_number)
-                    else:
-                        self.get_openai_response(command)
-                    break
+                    #     # Convert spelled-out numbers to digits
+                    #     if device_number in number_map:
+                    #         device_number = number_map[device_number]
+                    #     self.send_command_to_master(action, device_type, device_number)
+                    # else:
+                    #     self.get_openai_response(command)
+                    # break
                 if time.time() - start_time > 10:
                     print('No command found, back to sleep')
                     self.listen_for_command()

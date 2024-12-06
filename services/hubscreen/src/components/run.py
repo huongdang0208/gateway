@@ -111,7 +111,7 @@ def listen_for_commands(self):
                 if command.sender == 'BLE':
                     for light in command.led_device:
                         light_id = light.id
-                        if command.action == "turn on":
+                        if command.action == "on":
                             self.window[f'-{str(light_id).upper()}-OFF'].update(visible=False)
                             self.window[f'-{str(light_id).upper()}-ON'].update(visible=True)
                         else:
@@ -120,7 +120,7 @@ def listen_for_commands(self):
                 else:
                     for sw in command.sw_device:
                         sw_id = sw.id
-                        if command.action == "turn on":
+                        if command.action == "on":
                             self.window[f'-{str(sw_id).upper()}-TOGGLE-GRAPHIC-'].update(image_data= self.toggle_btn_on)
                         else:
                             self.window[f'-{str(sw_id).upper()}-TOGGLE-GRAPHIC-'].update(image_data= self.toggle_btn_off)

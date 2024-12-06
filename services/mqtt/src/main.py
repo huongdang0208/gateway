@@ -22,12 +22,9 @@ class MQTTService:
             {'topic': "adult/news", 'payload': "super extra"}
         ]
 
-        self.host = "51.79.251.117"
-        self.port = 1883
-
-        # Set up MQTT broker credentials from .env file
-        self.username = os.getenv('MQTT_SERVER_USERNAME')
-        self.password = os.getenv('MQTT_SERVER_PWD')
+        self.host = "btabc.dhpgo.com"
+        self.port = 443  # Default port for MQTT over WebSocket
+        self.path = "/mqtt"
 
     def publish_single_message(self, topic, message):
         print(f"Publishing to topic: {topic}, message: {message}")
@@ -36,11 +33,22 @@ class MQTTService:
             payload=message,
             hostname=self.host,
             port=self.port,
-            auth={'username': self.username, 'password': self.password}
+            transport='websockets',
+            client_id="mqttjs_" + os.urandom(4).hex(),
+            protocol=paho.MQTTv311,
+            ws_path=self.path
         )
 
     def publish_multiple_messages(self, msgs):
-        publish.multiple(msgs, hostname=self.host)
+        publish.multiple(
+            msgs,
+            hostname=self.host,
+            port=self.port,
+            transport='websockets',
+            client_id="mqttjs_" + os.urandom(4).hex(),
+            protocol=paho.MQTTv311,
+            ws_path=self.path
+        )
 
     def on_message(self, client, userdata, msg):
         print(f"Received message on topic: {msg.topic} with QoS {msg.qos} and payload {msg.payload.decode()}")
@@ -71,14 +79,14 @@ class MQTTService:
             else:
                 raise ValueError("Message format is incorrect")
         else:
-            pattern = r"turn (on|off) - \[state:\s*(\d+)\s*id:\s*(\d+)\s*name:\s*\"([^\"]+)\"\s*\]"
+            pattern = r"turn (on|off) - \[id:\s*(\d+),\s*state:\s*(\d+),\s*name:\s*([^\]]+)\]"
             match = re.search(pattern, message)
             if match:
                 action = match.group(1)
-                state = int(match.group(2))  # Convert state to integer
-                device_id = int(match.group(3))
+                device_id = int(match.group(2))
+                state = int(match.group(3))  # Convert state to integer
                 device_name = match.group(4)
-                if (msg.topic == "hub/lights"):
+                if msg.topic == "web/lights":
                     led_device = hubscreen_pb2.Led_t()
                     led_device.id = device_id
                     led_device.state = state
@@ -94,19 +102,22 @@ class MQTTService:
                 raise ValueError("Message format is incorrect")
 
     def on_subscribe(self):
-        client = paho.Client()
+        client = paho.Client(transport='websockets')
+        client.tls_set()
+        client.tls_insecure_set(True)  # Optional: Use only for testing, not in production.
+
         client.on_message = self.on_message
 
-        # Set MQTT broker username and password
-        client.username_pw_set(username=self.username, password=self.password)
+        # Set WebSocket path
+        client.ws_set_options(path=self.path)
 
         # Connect to the MQTT broker
         client.connect(self.host, self.port, 60)
 
         # Subscribe to topics
-        client.subscribe("hub/lights", 0)
-        client.subscribe("hub/switches", 0)
         client.subscribe("hub/devices", 0)
+        client.subscribe("web/lights", 0)
+        client.subscribe("web/switches", 0)
 
         # Keep the client loop running
         while client.loop() == 0:
